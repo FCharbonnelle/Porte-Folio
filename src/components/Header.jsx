@@ -43,8 +43,10 @@ export default function Header() {
   const NavButton = ({ section, isMobile = false, index = 0 }) => (
     <button
       className={isMobile 
-        ? "py-4 text-white text-lg font-semibold border-b border-gray-light/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent text-left transition-all duration-200 hover:pl-2 hover:text-accent"
-        : "nav-link font-semibold text-white hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-4 py-2 text-lg transition-all duration-200 uppercase tracking-wide shadow-sm hover:shadow-md"
+        ? "py-4 text-white text-xl font-semibold border-b border-gray-light/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent text-left transition-all duration-200 hover:pl-2 hover:text-accent"
+        : section.id === 'contact'
+          ? "btn btn-primary flex items-center justify-center px-6 py-2 text-white font-medium rounded-md shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300"
+          : "nav-link font-semibold text-white hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-5 py-3 text-xl transition-all duration-200 tracking-wide shadow-sm hover:shadow-md"
       }
       onClick={() => handleNavigation(section)}
       onKeyDown={(e) => handleKeyDown(e, section)}
@@ -58,14 +60,14 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isSticky ? 'glass shadow-soft h-16' : 'bg-transparent h-20'
+        isSticky ? 'glass shadow-soft h-20' : 'bg-transparent h-24'
       }`}
     >
-      <div className="container-wide flex items-center justify-between h-full">
+      <div className="container-wide flex items-center justify-between h-full px-6">
         {/* Logo */}
         <Link href="/" className="relative z-10 group">
-          <div className="font-space font-bold text-xl tracking-tight flex items-center">
-            <div className="h-8 w-8 mr-2 rounded-full overflow-hidden border border-accent-light/40 relative">
+          <div className="font-space font-bold text-2xl tracking-tight flex items-center">
+            <div className="h-10 w-10 mr-3 rounded-full overflow-hidden border border-accent-light/40 relative">
               <div 
                 className="w-full h-full bg-accent/20 flex items-center justify-center"
                 style={{
@@ -78,7 +80,7 @@ export default function Header() {
               </div>
             </div>
             <span className="text-accent">D</span>
-            <span className="ml-1 group-hover:text-accent transition-colors duration-300 text-xl text-white font-bold">éveloppeur Web</span>
+            <span className="ml-1 group-hover:text-accent transition-colors duration-300 text-2xl text-white font-bold">éveloppeur Web</span>
             <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></div>
           </div>
         </Link>
@@ -110,7 +112,7 @@ export default function Header() {
         </button>
 
         {/* Navigation desktop */}
-        <nav className="hidden md:flex items-center justify-center gap-10 mx-auto">
+        <nav className="hidden md:flex items-center justify-center gap-12 mx-auto">
           {NAV_SECTIONS.map((section) => (
             <NavButton key={section.id} section={section} />
           ))}

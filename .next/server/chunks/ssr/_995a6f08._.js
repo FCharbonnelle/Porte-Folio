@@ -93,7 +93,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$MouseEf
 ;
 ;
 const metadata = {
-    title: "Portfolio | Développeur Web & Designer",
+    title: "Portfolio | Développeur Web",
     description: "Portfolio professionnel mettant en avant mes projets et compétences en développement web frontend avec React, Next.js, Tailwind CSS et animations fluides.",
     keywords: [
         "portfolio",
@@ -111,7 +111,7 @@ const metadata = {
     ],
     creator: "Développeur Portfolio",
     openGraph: {
-        title: "Portfolio | Développeur Web & Designer",
+        title: "Portfolio | Développeur Web",
         description: "Portfolio professionnel mettant en avant mes projets et compétences en développement web frontend.",
         url: "https://portfolio-website.com",
         siteName: "Portfolio Développeur Web",

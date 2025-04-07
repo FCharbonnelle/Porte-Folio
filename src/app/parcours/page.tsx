@@ -139,11 +139,19 @@ export default function Parcours() {
           onClose={() => setModalOpen(false)} 
           title={selectedItem.title}
           imageSrc={selectedItem.title === "Conseiller de vente Equipements de la Maison" 
-            ? "/assets/parcours/conseiller.jpg" 
+            ? "/assets/parcours/conseiller.jpg"
+            : selectedItem.title === "Conseiller de vente en téléphonie"
+            ? "/assets/parcours/conseiller_orange.jpg"
             : selectedItem.title === "Développeur Web/Web mobile"
             ? "/assets/parcours/dwwm.jpg"
             : selectedItem.title === "BEP Electronique"
             ? "/assets/parcours/bep-elec.jpg"
+            : selectedItem.title === "BTS Technico-Commercial"
+            ? "/assets/parcours/bts-tc.jpg"
+            : selectedItem.title === "Baccalauréat STI génie productique mécanique"
+            ? "/assets/parcours/bac-sti.jpg"
+            : selectedItem.title === "Vendeur logithèque"
+            ? "/assets/parcours/vendeur-fnac.jpg"
             : undefined}
         >
           <div className="space-y-4">

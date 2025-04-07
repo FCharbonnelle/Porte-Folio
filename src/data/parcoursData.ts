@@ -75,24 +75,4 @@ export const parcoursData: ParcoursSection[] = [
       { title: "Jeux vidéos multi-joueurs en ligne" },
     ],
   },
-  {
-    section: "Références",
-    icon: "👤",
-    items: [
-      { title: "Simoen Stéphane - Manager vente EEGP, Auchan", contact: "ssimoen@auchan.fr" },
-      { title: "Marwan Doghri - Étudiant en Droit et Commercial Sofinther", contact: "https://www.linkedin.com/in/marwan-doghri/" },
-    ],
-  },
-  {
-    section: "Informations personnelles",
-    icon: "📌",
-    items: [
-      { title: "Fabien Charbonnelle" },
-      { title: "fcharbonnelle@gmail.com" },
-      { title: "06 76 12 86 61" },
-      { title: "Permis B & Véhicule personnel" },
-      { title: "Télétravail ou présentiel" },
-      { title: "Saulxures-lès-Nancy (54420)" },
-    ],
-  },
 ]; 

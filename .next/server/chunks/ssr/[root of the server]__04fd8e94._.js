@@ -658,44 +658,6 @@ const parcoursData = [
                 title: "Jeux vidéos multi-joueurs en ligne"
             }
         ]
-    },
-    {
-        section: "Références",
-        icon: "👤",
-        items: [
-            {
-                title: "Simoen Stéphane - Manager vente EEGP, Auchan",
-                contact: "ssimoen@auchan.fr"
-            },
-            {
-                title: "Marwan Doghri - Étudiant en Droit et Commercial Sofinther",
-                contact: "https://www.linkedin.com/in/marwan-doghri/"
-            }
-        ]
-    },
-    {
-        section: "Informations personnelles",
-        icon: "📌",
-        items: [
-            {
-                title: "Fabien Charbonnelle"
-            },
-            {
-                title: "fcharbonnelle@gmail.com"
-            },
-            {
-                title: "06 76 12 86 61"
-            },
-            {
-                title: "Permis B & Véhicule personnel"
-            },
-            {
-                title: "Télétravail ou présentiel"
-            },
-            {
-                title: "Saulxures-lès-Nancy (54420)"
-            }
-        ]
     }
 ];
 }}),
@@ -1010,7 +972,7 @@ function Parcours() {
                 open: modalOpen,
                 onClose: ()=>setModalOpen(false),
                 title: selectedItem.title,
-                imageSrc: selectedItem.title === "Conseiller de vente Equipements de la Maison" ? "/assets/parcours/conseiller.jpg" : selectedItem.title === "Développeur Web/Web mobile" ? "/assets/parcours/dwwm.jpg" : selectedItem.title === "BEP Electronique" ? "/assets/parcours/bep-elec.jpg" : undefined,
+                imageSrc: selectedItem.title === "Conseiller de vente Equipements de la Maison" ? "/assets/parcours/conseiller.jpg" : selectedItem.title === "Conseiller de vente en téléphonie" ? "/assets/parcours/conseiller_orange.jpg" : selectedItem.title === "Développeur Web/Web mobile" ? "/assets/parcours/dwwm.jpg" : selectedItem.title === "BEP Electronique" ? "/assets/parcours/bep-elec.jpg" : selectedItem.title === "BTS Technico-Commercial" ? "/assets/parcours/bts-tc.jpg" : selectedItem.title === "Baccalauréat STI génie productique mécanique" ? "/assets/parcours/bac-sti.jpg" : selectedItem.title === "Vendeur logithèque" ? "/assets/parcours/vendeur-fnac.jpg" : undefined,
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "space-y-4",
                     children: [
@@ -1021,7 +983,7 @@ function Parcours() {
                                     children: "Période"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 152,
+                                    lineNumber: 160,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1029,13 +991,13 @@ function Parcours() {
                                     children: selectedItem.date
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 153,
+                                    lineNumber: 161,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/parcours/page.tsx",
-                            lineNumber: 151,
+                            lineNumber: 159,
                             columnNumber: 15
                         }, this),
                         selectedItem.lieu && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1045,7 +1007,7 @@ function Parcours() {
                                     children: "Lieu"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 159,
+                                    lineNumber: 167,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1053,13 +1015,13 @@ function Parcours() {
                                     children: selectedItem.lieu
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 160,
+                                    lineNumber: 168,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/parcours/page.tsx",
-                            lineNumber: 158,
+                            lineNumber: 166,
                             columnNumber: 15
                         }, this),
                         selectedItem.contact && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1069,7 +1031,7 @@ function Parcours() {
                                     children: "Contact"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 166,
+                                    lineNumber: 174,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1080,7 +1042,7 @@ function Parcours() {
                                         children: selectedItem.contact
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/parcours/page.tsx",
-                                        lineNumber: 169,
+                                        lineNumber: 177,
                                         columnNumber: 21
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                                         href: selectedItem.contact,
@@ -1090,18 +1052,18 @@ function Parcours() {
                                         children: "Voir le profil LinkedIn"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/parcours/page.tsx",
-                                        lineNumber: 173,
+                                        lineNumber: 181,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/parcours/page.tsx",
-                                    lineNumber: 167,
+                                    lineNumber: 175,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/parcours/page.tsx",
-                            lineNumber: 165,
+                            lineNumber: 173,
                             columnNumber: 15
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1111,18 +1073,18 @@ function Parcours() {
                                 children: "Cliquez en dehors de cette fenêtre ou appuyez sur ESC pour la fermer."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/parcours/page.tsx",
-                                lineNumber: 182,
+                                lineNumber: 190,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/parcours/page.tsx",
-                            lineNumber: 181,
+                            lineNumber: 189,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/parcours/page.tsx",
-                    lineNumber: 149,
+                    lineNumber: 157,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
@@ -1132,7 +1094,7 @@ function Parcours() {
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Footer$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/src/app/parcours/page.tsx",
-                lineNumber: 190,
+                lineNumber: 198,
                 columnNumber: 7
             }, this)
         ]

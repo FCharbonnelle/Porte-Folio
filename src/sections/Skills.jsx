@@ -5,15 +5,15 @@ import { techIcons } from '@/data/techIcons';
 
 const SkillBadge = ({ skill }) => (
   <div 
-    className="skill-badge group bg-white/5 hover:bg-white/10 border-2 border-indigo-600 hover:border-indigo-600 hover:scale-105 transition-all flex items-center p-4 rounded-lg shadow-sm"
+    className="skill-badge group bg-black/40 hover:bg-indigo-900/50 border-2 border-indigo-600 hover:border-indigo-400 hover:scale-105 transition-all flex items-center p-4 rounded-lg shadow-md backdrop-blur-sm"
   >
-    <span className="text-indigo-600 group-hover:text-indigo-600 font-medium text-lg">{skill}</span>
+    <span className="text-indigo-300 group-hover:text-white font-medium text-lg">{skill}</span>
   </div>
 );
 
 const SkillCategory = ({ title, skills }) => (
   <div className="mb-10">
-    <h3 className="text-xl font-medium mb-4">{title}</h3>
+    <h3 className="text-xl font-bold mb-4 text-indigo-300 bg-black/50 inline-block px-4 py-1 rounded-md">{title}</h3>
     <div className="flex flex-wrap gap-4 justify-center">
       {skills.map((skill, index) => (
         <SkillBadge key={index} skill={skill} />
@@ -50,11 +50,19 @@ export default function Skills() {
         <div className="w-full">
           <span className="badge mb-3 inline-block">Compétences</span>
           <h2 className="mb-5">Expertise technique</h2>
-          <p>Voici les technologies et outils que j'utilise pour créer des expériences numériques élégantes et performantes.</p>
+          <p className="mb-10 max-w-2xl mx-auto">Voici les technologies et outils que j'utilise pour créer des expériences numériques élégantes et performantes.</p>
         </div>
 
-        <div className="fade-in-up grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="md:col-span-2 bg-background/60 rounded-2xl p-8 border border-accent-light/20 shadow-soft text-center">
+        <div className="fade-in-up grid grid-cols-1 gap-10">
+          <div 
+            className="md:col-span-2 bg-background/60 rounded-2xl p-8 border border-accent-light/20 shadow-soft text-center"
+            style={{ 
+              backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/code-bg.webp')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundBlendMode: "normal"
+            }}
+          >
             {skillsData.map((category, index) => (
               <SkillCategory 
                 key={index}

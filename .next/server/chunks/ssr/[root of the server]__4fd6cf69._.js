@@ -729,9 +729,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$data$2f$techIcons$2e$
 ;
 ;
 const SkillBadge = ({ skill })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "skill-badge group bg-white/5 hover:bg-white/10 border-2 border-indigo-600 hover:border-indigo-600 hover:scale-105 transition-all flex items-center p-4 rounded-lg shadow-sm",
+        className: "skill-badge group bg-black/40 hover:bg-indigo-900/50 border-2 border-indigo-600 hover:border-indigo-400 hover:scale-105 transition-all flex items-center p-4 rounded-lg shadow-md backdrop-blur-sm",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-            className: "text-indigo-600 group-hover:text-indigo-600 font-medium text-lg",
+            className: "text-indigo-300 group-hover:text-white font-medium text-lg",
             children: skill
         }, void 0, false, {
             fileName: "[project]/src/sections/Skills.jsx",
@@ -747,7 +747,7 @@ const SkillCategory = ({ title, skills })=>/*#__PURE__*/ (0, __TURBOPACK__import
         className: "mb-10",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                className: "text-xl font-medium mb-4",
+                className: "text-xl font-bold mb-4 text-indigo-300 bg-black/50 inline-block px-4 py-1 rounded-md",
                 children: title
             }, void 0, false, {
                 fileName: "[project]/src/sections/Skills.jsx",
@@ -831,6 +831,7 @@ function Skills() {
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "mb-10 max-w-2xl mx-auto",
                             children: "Voici les technologies et outils que j'utilise pour créer des expériences numériques élégantes et performantes."
                         }, void 0, false, {
                             fileName: "[project]/src/sections/Skills.jsx",
@@ -844,15 +845,21 @@ function Skills() {
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "fade-in-up grid grid-cols-1 md:grid-cols-2 gap-10",
+                    className: "fade-in-up grid grid-cols-1 gap-10",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "md:col-span-2 bg-background/60 rounded-2xl p-8 border border-accent-light/20 shadow-soft text-center",
+                        style: {
+                            backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/code-bg.webp')",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundBlendMode: "normal"
+                        },
                         children: skillsData.map((category, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(SkillCategory, {
                                 title: category.category,
                                 skills: category.items
                             }, index, false, {
                                 fileName: "[project]/src/sections/Skills.jsx",
-                                lineNumber: 59,
+                                lineNumber: 67,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {

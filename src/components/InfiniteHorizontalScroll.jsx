@@ -308,7 +308,7 @@ const InfiniteHorizontalScroll = ({ projects }) => {
                   <img
                     src={projects[index].image}
                     alt={projects[index].title}
-                    className="object-contain w-full h-full"
+                    className="object-cover w-full h-full"
                   />
                 </motion.div>
               </div>

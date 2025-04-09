@@ -231,16 +231,15 @@ export default function ProjectCarousel({ projects }) {
                   <div className="grid md:grid-cols-[1fr_1fr] h-full">
                     <div className="relative h-full overflow-hidden bg-white">
                       <motion.div
-                        className="h-full w-full flex items-center justify-center p-4"
+                        className="h-full w-full"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <div className="relative h-full w-full flex items-center justify-center">
+                        <div className="relative h-full w-full">
                           <img
                             src={project.image}
                             alt={project.title}
-                            className="object-contain max-h-full max-w-full"
-                            style={{ display: 'block', margin: '0 auto' }}
+                            className="object-cover w-full h-full"
                           />
                         </div>
                       </motion.div>

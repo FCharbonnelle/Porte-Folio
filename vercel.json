@@ -1,17 +1,16 @@
 {
-  "buildCommand": "next build",
-  "ignoreCommand": "next lint",
-  "installCommand": "npm install",
   "builds": [
     {
-      "src": "next.config.js",
+      "src": "package.json",
       "use": "@vercel/next"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+  "build": {
+    "env": {
+      "NEXT_DISABLE_ESLINT": "1"
     }
-  ]
+  },
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev"
 } 

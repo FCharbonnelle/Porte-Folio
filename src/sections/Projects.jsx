@@ -44,12 +44,12 @@ export default function Projects() {
     },
     {
       title: "Portfolio Responsive",
-      description: "Site web portfolio personnel présentant mes projets et compétences avec une interface élégante et responsive.",
-      image: "/assets/project-2.jpg",
+      description: "Site web portfolio personnel présentant mon parcours, mes projets et compétences avec une interface élégante et responsive.",
+      image: "/assets/portfolio_portrait.jpg",
       category: "Site Web",
       technologies: ["Next.js", "TailwindCSS", "Framer Motion"],
-      link: "https://portfolio-next.vercel.app",
-      github: "https://github.com/username/portfolio"
+      link: "https://portfolio-next-jet.vercel.app/",
+      github: "https://github.com/FCharbonnelle/Portfolio-Next.git"
     }
   ];
 

@@ -297,19 +297,18 @@ const InfiniteHorizontalScroll = ({ projects }) => {
               }}
             >
               {/* Image du projet */}
-              <div className="relative h-36 sm:h-40 md:h-60 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/60 z-10" />
+              <div className="relative h-48 sm:h-60 md:h-80 overflow-hidden">
                 <motion.div
                   className="h-full w-full parallax-image"
                   style={{
-                    transform: `scale(1.05) translateX(${-parallaxOffset.x * 5 * (i - 1)}px) translateY(${-parallaxOffset.y * 5}px)`,
+                    transform: `scale(1.00) translateX(${-parallaxOffset.x * 5 * (i - 1)}px) translateY(${-parallaxOffset.y * 5}px)`,
                     transition: isDragging ? 'none' : 'transform 0.2s ease-out'
                   }}
                 >
                   <img
                     src={projects[index].image}
                     alt={projects[index].title}
-                    className="object-cover w-full h-full"
+                    className="object-contain w-full h-full"
                   />
                 </motion.div>
               </div>

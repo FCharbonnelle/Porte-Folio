@@ -229,23 +229,18 @@ export default function ProjectCarousel({ projects }) {
                   }}
                 >
                   <div className="grid md:grid-cols-[1fr_1fr] h-full">
-                    <div className="relative h-full overflow-hidden">
-                      <motion.div 
-                        className="absolute inset-0 bg-gradient-to-r from-accent/10 to-background-dark/50 z-10"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                      />
+                    <div className="relative h-full overflow-hidden bg-white">
                       <motion.div
-                        className="h-full w-full"
-                        whileHover={{ scale: 1.05 }}
+                        className="h-full w-full flex items-center justify-center p-4"
+                        whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <div className="relative h-full w-full">
+                        <div className="relative h-full w-full flex items-center justify-center">
                           <img
                             src={project.image}
                             alt={project.title}
-                            className="object-cover w-full h-full"
+                            className="object-contain max-h-full max-w-full"
+                            style={{ display: 'block', margin: '0 auto' }}
                           />
                         </div>
                       </motion.div>

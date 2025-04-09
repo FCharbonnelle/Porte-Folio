@@ -89,14 +89,15 @@ export default function ProjectCard({
       whileHover="hover"
     >
       <Link href={link} passHref className="block overflow-hidden">
-        <div className="relative w-full aspect-[16/9] overflow-hidden">
-          <motion.div className="h-full w-full" variants={ANIMATIONS.image}>
+        <div className="relative w-full aspect-[16/9] overflow-hidden bg-white p-2 flex items-center justify-center">
+          <motion.div className="h-full w-full flex items-center justify-center" variants={ANIMATIONS.image}>
             <Image
               src={image}
               alt={title}
-              className="object-cover"
+              className="object-contain"
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              style={{ objectFit: 'contain' }}
             />
           </motion.div>
         </div>

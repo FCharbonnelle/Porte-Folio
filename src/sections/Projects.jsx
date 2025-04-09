@@ -47,7 +47,7 @@ export default function Projects() {
       description: "Site web portfolio personnel présentant mon parcours, mes projets et compétences avec une interface élégante et responsive.",
       image: "/assets/portfolio_portrait.jpg",
       category: "Site Web",
-      technologies: ["Next.js", "TailwindCSS", "Framer Motion"],
+      technologies: ["React.js", "Next.js", "TailwindCSS", "Framer Motion", "Local Storage"],
       link: "https://portfolio-next-jet.vercel.app/",
       github: "https://github.com/FCharbonnelle/Portfolio-Next.git"
     }

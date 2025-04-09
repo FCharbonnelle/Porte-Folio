@@ -6,12 +6,15 @@ export default function Card({
   className = '',
   animated = true,
   padding = 'medium',
-  shadow = 'medium'
+  shadow = 'medium',
+  radius = 'medium',
+  hover = true
 }) {
   const paddings = {
-    small: 'p-4',
-    medium: 'p-6',
-    large: 'p-8',
+    small: 'p-3 sm:p-4',
+    medium: 'p-4 sm:p-5 md:p-6',
+    large: 'p-5 sm:p-6 md:p-7 lg:p-8',
+    none: 'p-0'
   };
   
   const shadows = {
@@ -19,9 +22,18 @@ export default function Card({
     small: 'shadow-sm',
     medium: 'shadow-md',
     large: 'shadow-lg',
+    xl: 'shadow-xl'
   };
   
-  const baseClasses = `rounded-lg bg-white ${paddings[padding]} ${shadows[shadow]} transition-all`;
+  const radiuses = {
+    none: 'rounded-none',
+    small: 'rounded',
+    medium: 'rounded-lg',
+    large: 'rounded-xl',
+    full: 'rounded-full'
+  };
+  
+  const baseClasses = `bg-white ${paddings[padding]} ${shadows[shadow]} ${radiuses[radius]} transition-all duration-300`;
   
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -33,14 +45,14 @@ export default function Card({
         ease: [0.22, 1, 0.36, 1]
       }
     },
-    hover: {
+    hover: hover ? {
       y: -5,
       boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       transition: {
         duration: 0.3,
         ease: 'easeInOut'
       }
-    }
+    } : {}
   };
   
   if (animated) {
@@ -50,7 +62,7 @@ export default function Card({
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-        whileHover="hover"
+        whileHover={hover ? "hover" : undefined}
         variants={cardVariants}
       >
         {children}
@@ -59,7 +71,7 @@ export default function Card({
   }
   
   return (
-    <div className={`${baseClasses} ${className}`}>
+    <div className={`${baseClasses} ${className} ${hover ? 'hover:-translate-y-1 hover:shadow-lg' : ''}`}>
       {children}
     </div>
   );

@@ -228,18 +228,24 @@ export default function ProjectCarousel({ projects }) {
                     ...floatingAnim.rotate.animate
                   }}
                 >
-                  <div className="grid md:grid-cols-[1fr_1fr] h-full">
+                  <div className="grid md:grid-cols-[1.2fr_1fr] h-full">
                     <div className="relative h-full overflow-hidden bg-white">
                       <motion.div
-                        className="h-full w-full"
+                        className="h-full w-full flex items-center justify-center p-1"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <div className="relative h-full w-full">
+                        <div className="relative h-full w-full flex items-center justify-center">
                           <img
                             src={project.image}
                             alt={project.title}
-                            className="object-cover w-full h-full"
+                            className="max-w-full max-h-full w-auto h-auto"
+                            style={{ 
+                              objectFit: 'contain', 
+                              margin: '0 auto',
+                              width: '100%',
+                              height: '100%'
+                            }}
                           />
                         </div>
                       </motion.div>

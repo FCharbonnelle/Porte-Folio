@@ -1,7 +1,125 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+
+const ProjectCard = ({ project, delay }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Valeurs pour le suivi de la souris
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  // Valeurs avec spring pour une animation plus fluide
+  const springX = useSpring(x, { damping: 50, stiffness: 400 });
+  const springY = useSpring(y, { damping: 50, stiffness: 400 });
+  
+  // Transformation des valeurs pour l'effet visuel
+  const rotateX = useTransform(springY, [-100, 100], [10, -10]);
+  const rotateY = useTransform(springX, [-100, 100], [-10, 10]);
+  const brightness = useTransform(springY, [-100, 100], [1.1, 0.9]);
+  
+  // Gérer le mouvement de la souris
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Calculer la distance par rapport au centre
+    const moveX = (e.clientX - centerX) / 5;
+    const moveY = (e.clientY - centerY) / 5;
+    
+    x.set(moveX);
+    y.set(moveY);
+  };
+  
+  return (
+    <motion.div
+      className="relative min-h-[300px] sm:min-h-[350px] md:min-h-[400px] rounded-xl md:rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-background/5 backdrop-blur-sm flex flex-col"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        transition: { 
+          delay: delay * 0.1,
+          duration: 0.6,
+          ease: [0.22, 1, 0.36, 1]
+        }
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        x.set(0);
+        y.set(0);
+      }}
+      onMouseMove={handleMouseMove}
+      style={{
+        rotateX: isHovered ? rotateX : 0,
+        rotateY: isHovered ? rotateY : 0,
+        transformPerspective: 1000,
+        filter: isHovered ? `brightness(${brightness})` : 'brightness(1)'
+      }}
+      whileHover={{ 
+        scale: 1.02,
+        transition: { duration: 0.2 }
+      }}
+    >
+      {/* Image du projet */}
+      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden bg-white">
+        <motion.div
+          className="h-full w-full flex items-center justify-center"
+          style={{
+            scale: isHovered ? 1.05 : 1,
+            transition: "scale 0.2s ease"
+          }}
+        >
+          <img 
+            src={project.image} 
+            alt={project.title} 
+            className="w-full h-full object-cover" 
+          />
+        </motion.div>
+      </div>
+
+      {/* Contenu du projet */}
+      <div className="flex flex-col flex-grow p-4 sm:p-5 md:p-6">
+        <motion.h3 
+          className="text-lg sm:text-xl md:text-2xl font-bold mb-1 text-white"
+          style={{
+            translateY: isHovered ? -5 : 0
+          }}
+        >
+          {project.title}
+        </motion.h3>
+        <motion.p 
+          className="text-sm text-white/70 mb-3 line-clamp-3"
+          style={{
+            translateY: isHovered ? -3 : 0
+          }}
+        >
+          {project.description}
+        </motion.p>
+        <div className="mt-auto">
+          <motion.div 
+            className="flex gap-2 flex-wrap"
+            style={{
+              translateY: isHovered ? -2 : 0
+            }}
+          >
+            {project.tags.map((tag, tagIndex) => (
+              <span 
+                key={tagIndex} 
+                className="text-xs px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80"
+              >
+                {tag}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const InfiniteHorizontalScroll = ({ projects }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,20 +136,23 @@ const InfiniteHorizontalScroll = ({ projects }) => {
 
   // Fonction pour obtenir les indices des projets visibles
   const getVisibleProjects = useCallback(() => {
-    // Afficher 3 projets consécutifs à partir de l'index actuel
-    const startIndex = Math.floor(currentIndex / 3) * 3; // S'assurer que nous commençons toujours par un multiple de 3
-    const indices = [];
+    // Afficher 2 projets à la fois
+    const visibleProjects = [];
+    const startIndex = Math.floor(currentIndex / 2) * 2;
     
-    for (let i = 0; i < 3 && i + startIndex < projects.length; i++) {
-      indices.push(startIndex + i);
+    // Ajouter jusqu'à 2 projets
+    for (let i = 0; i < 2; i++) {
+      if (startIndex + i < projects.length) {
+        visibleProjects.push(startIndex + i);
+      }
     }
     
-    // Si nous n'avons pas assez de projets pour remplir la rangée, ajouter des projets du début
-    while (indices.length < 3) {
-      indices.push(indices.length % projects.length);
+    // Si nous n'avons pas 2 projets, compléter le reste avec des projets du début
+    while (visibleProjects.length < 2) {
+      visibleProjects.push(visibleProjects.length);
     }
     
-    return indices;
+    return visibleProjects;
   }, [currentIndex, projects.length]);
 
   // Calculer la largeur du carrousel
@@ -136,36 +257,23 @@ const InfiniteHorizontalScroll = ({ projects }) => {
     }
   }, []);
 
-  // Navigation manuelle avec les boutons
-  const goToPrevious = () => {
-    if (isTransitioning) return;
-    
-    setDirection(-1);
-    setIsTransitioning(true);
-    
-    // Navigation par groupe de 3
-    const newIndex = Math.max(0, Math.floor(currentIndex / 3) * 3 - 3);
-    setCurrentIndex(newIndex);
-    
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 700);
-  };
+  // Fonction pour naviguer vers la page précédente
+  const handlePrevious = useCallback(() => {
+    setCurrentIndex((prevIndex) => {
+      // Déplacer par groupe de 2 projets
+      const newIndex = prevIndex - 2;
+      return newIndex < 0 ? projects.length - (projects.length % 2 || 2) : newIndex;
+    });
+  }, [projects.length]);
 
-  const goToNext = () => {
-    if (isTransitioning) return;
-    
-    setDirection(1);
-    setIsTransitioning(true);
-    
-    // Navigation par groupe de 3
-    const newIndex = Math.min(projects.length - 1, Math.floor(currentIndex / 3) * 3 + 3);
-    setCurrentIndex(newIndex);
-    
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 700);
-  };
+  // Fonction pour naviguer vers la page suivante
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prevIndex) => {
+      // Déplacer par groupe de 2 projets
+      const newIndex = prevIndex + 2;
+      return newIndex >= projects.length ? 0 : newIndex;
+    });
+  }, [projects.length]);
 
   // Ajouter les écouteurs d'événements
   useEffect(() => {
@@ -201,7 +309,7 @@ const InfiniteHorizontalScroll = ({ projects }) => {
     // Démarrer le défilement automatique si on n'est pas en train de faire glisser
     if (!isDragging && !isTransitioning) {
       autoScrollInterval = setInterval(() => {
-        goToNext();
+        handleNext();
       }, 8000); // Changement toutes les 8 secondes
     }
     
@@ -268,136 +376,24 @@ const InfiniteHorizontalScroll = ({ projects }) => {
         className="container-wide relative mb-10"
       >
         <motion.div 
-          className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-6 w-full"
+          className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-8 w-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           {visibleProjects.map((index, i) => (
-            <motion.div
-              key={`${projects[index].id}-${index}`}
-              className="relative min-h-[300px] sm:min-h-[350px] md:min-h-[450px] rounded-xl md:rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-background/5 backdrop-blur-sm flex flex-col"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: 1, 
-                y: 0,
-                transition: { 
-                  delay: i * 0.1,
-                  duration: 0.6,
-                  ease: [0.22, 1, 0.36, 1]
-                }
-              }}
-              whileHover={{ 
-                y: -10,
-                transition: { duration: 0.3 }
-              }}
-              style={{
-                transform: `perspective(1000px) rotateY(${parallaxOffset.x * (i - 1)}deg) rotateX(${-parallaxOffset.y}deg)`,
-                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
-              }}
-            >
-              {/* Image du projet */}
-              <div className="relative h-48 sm:h-60 md:h-80 overflow-hidden">
-                <motion.div
-                  className="h-full w-full parallax-image"
-                  style={{
-                    transform: `scale(1.00) translateX(${-parallaxOffset.x * 5 * (i - 1)}px) translateY(${-parallaxOffset.y * 5}px)`,
-                    transition: isDragging ? 'none' : 'transform 0.2s ease-out'
-                  }}
-                >
-                  <img
-                    src={projects[index].image}
-                    alt={projects[index].title}
-                    className="object-cover w-full h-full"
-                  />
-                </motion.div>
-              </div>
-              
-              {/* Contenu du projet */}
-              <div className="p-3 sm:p-4 md:p-6 fade-overflow flex-grow flex flex-col">
-                <motion.h3 
-                  className="text-base sm:text-lg md:text-2xl font-bold text-foreground mb-1 md:mb-3 float-small truncate"
-                  whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                >
-                  {projects[index].title}
-                </motion.h3>
-                
-                <p className="text-xs md:text-sm text-gray-dark float mb-2 md:mb-4 line-clamp-2 md:line-clamp-3 flex-grow">
-                  {projects[index].description}
-                </p>
-                
-                <div className="flex flex-wrap gap-1 mb-2 md:mb-4">
-                  {projects[index].tags?.slice(0, 2).map((tag, tagIndex) => (
-                    <motion.span 
-                      key={tagIndex} 
-                      className="text-[10px] sm:text-xs py-0.5 px-1.5 sm:py-1 sm:px-2 rounded-full bg-accent/10 text-accent border border-accent/20 hover-offset float-small float-delay-2"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ 
-                        opacity: 1, 
-                        y: 0,
-                        transition: { delay: 0.3 + (tagIndex * 0.1) } 
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      {tag}
-                    </motion.span>
-                  ))}
-                  {projects[index].tags?.length > 2 && (
-                    <motion.span className="text-[10px] sm:text-xs py-0.5 px-1.5 sm:py-1 sm:px-2 rounded-full bg-gray-dark/10 text-gray-dark border border-gray-dark/20">
-                      +{projects[index].tags.length - 2}
-                    </motion.span>
-                  )}
-                </div>
-                
-                <div className="pt-1 md:pt-2 mt-auto flex gap-3">
-                  <motion.a 
-                    href={projects[index].link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[10px] sm:text-xs md:text-sm inline-flex items-center text-accent font-medium float-small"
-                    whileHover={{ scale: 1.05, x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Voir le projet
-                    <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </motion.a>
-                  
-                  {projects[index].github && (
-                    <motion.a 
-                      href={projects[index].github} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-[10px] sm:text-xs md:text-sm inline-flex items-center text-white/70 font-medium float-small"
-                      whileHover={{ scale: 1.05, x: 5 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      GitHub
-                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 20.5C4.5 22 4.5 17.5 3 17m14 7v-4.5c0-1 0-2-1.5-2.5 4 0 6.5-2 6.5-5.5 0-1.5-.5-2.5-1.5-3.5 0-.5.5-2-.5-3.5 0 0-1.5-.5-3.5 1.5-2-.5-4-.5-6 0-2-2-3.5-1.5-3.5-1.5-1 1.5-.5 3-.5 3.5-1 1-1.5 2-1.5 3.5 0 3.5 2.5 5.5 6.5 5.5-1 .5-1.5 1.5-1.5 2.5v4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </motion.a>
-                  )}
-                </div>
-              </div>
-              
-              {/* Badge d'index */}
-              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center font-mono text-white text-[10px] sm:text-xs md:text-sm shadow-lg">
-                {index + 1}
-              </div>
-            </motion.div>
+            <ProjectCard key={`card-${index}`} project={projects[index]} delay={i} />
           ))}
           
-          {/* Afficher plus de projets - Uniquement visible s'il y a plus de 3 projets au total */}
-          {projects.length > 3 && (
+          {/* Afficher plus de projets - Uniquement visible s'il y a plus de 2 projets au total */}
+          {projects.length > 2 && (
             <motion.div
-              className="flex items-center justify-center min-h-[300px] sm:min-h-[350px] md:min-h-[450px] rounded-xl md:rounded-2xl border border-dashed border-white/20 bg-transparent"
+              className="flex items-center justify-center min-h-[300px] sm:min-h-[350px] md:min-h-[400px] rounded-xl md:rounded-2xl border border-dashed border-white/20 bg-transparent"
               whileHover={{ scale: 1.02 }}
             >
               <div className="text-center p-3 sm:p-4 md:p-6">
                 <motion.button
-                  onClick={goToNext}
+                  onClick={handleNext}
                   className="flex flex-col items-center justify-center text-accent"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -414,13 +410,13 @@ const InfiniteHorizontalScroll = ({ projects }) => {
       </div>
       
       {/* Boutons de navigation */}
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center items-center gap-8 z-20">
+      <div className="absolute bottom-10 left-0 right-0 flex justify-center items-center gap-4 z-20">
         <motion.button
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
           whileTap="tap"
-          onClick={goToPrevious}
+          onClick={handlePrevious}
           className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white border border-white/20 shadow-lg cursor-grab float-small float-delay-1"
           aria-label="Projets précédents"
         >
@@ -439,38 +435,12 @@ const InfiniteHorizontalScroll = ({ projects }) => {
           </svg>
         </motion.button>
         
-        {/* Pagination */}
-        <div className="flex gap-2">
-          {Array.from({ length: Math.ceil(projects.length / 3) }).map((_, index) => {
-            const isActive = Math.floor(currentIndex / 3) === index;
-            return (
-              <motion.button
-                key={index}
-                className={`h-3 rounded-full transition-all duration-300 pagination-indicator ${
-                  isActive ? 'active' : 'bg-white/30 w-3'
-                }`}
-                onClick={() => {
-                  if (isTransitioning) return;
-                  const targetIndex = index * 3;
-                  setDirection(targetIndex > currentIndex ? 1 : -1);
-                  setIsTransitioning(true);
-                  setCurrentIndex(targetIndex);
-                  setTimeout(() => setIsTransitioning(false), 700);
-                }}
-                initial={{ scale: 1 }}
-                whileHover={{ scale: 1.5 }}
-                aria-label={`Aller au groupe de projets ${index + 1}`}
-              />
-            );
-          })}
-        </div>
-        
         <motion.button
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
           whileTap="tap"
-          onClick={goToNext}
+          onClick={handleNext}
           className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white border border-white/20 shadow-lg cursor-grab float-small float-delay-3"
           aria-label="Projets suivants"
         >
@@ -492,9 +462,9 @@ const InfiniteHorizontalScroll = ({ projects }) => {
       
       {/* Numéro du groupe actuel et nombre total */}
       <div className="absolute top-10 right-8 text-lg font-mono opacity-70">
-        <span className="text-accent text-2xl">{String(Math.floor(currentIndex / 3) + 1).padStart(2, '0')}</span>
+        <span className="text-accent text-2xl">{String(Math.floor(currentIndex / 2) + 1).padStart(2, '0')}</span>
         <span className="mx-2 text-white/50">/</span>
-        <span className="text-white/50">{String(Math.ceil(projects.length / 3)).padStart(2, '0')}</span>
+        <span className="text-white/50">{String(Math.ceil(projects.length / 2)).padStart(2, '0')}</span>
       </div>
     </div>
   );

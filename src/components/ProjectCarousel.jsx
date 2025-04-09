@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 
 // Fonction pour créer un effet de flottement avec des paramètres aléatoires
@@ -62,8 +62,10 @@ export default function ProjectCarousel({ projects }) {
   const [width, setWidth] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
   const carouselRef = useRef(null);
-
+  const carouselControls = useAnimation();
+  
   // Calculer la largeur du carrousel
   useEffect(() => {
     if (carouselRef.current) {
@@ -80,39 +82,71 @@ export default function ProjectCarousel({ projects }) {
         const scrollWidth = carouselRef.current.scrollWidth;
         const offsetWidth = carouselRef.current.offsetWidth;
         setWidth(scrollWidth - offsetWidth);
+        
+        // Recalibrer l'animation sur redimensionnement
+        navigateToProject(activeIndex, false);
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [activeIndex]);
+
+  // Autoplay du carrousel
+  useEffect(() => {
+    let interval;
+
+    const startAutoplay = () => {
+      interval = setInterval(() => {
+        if (!autoplayPaused && !isDragging) {
+          const nextIndex = (activeIndex + 1) % projects.length;
+          navigateToProject(nextIndex, true);
+        }
+      }, 5000); // Changement toutes les 5 secondes
+    };
+
+    startAutoplay();
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeIndex, autoplayPaused, isDragging, projects.length]);
 
   // Fonction pour naviguer vers un projet spécifique
-  const navigateToProject = (index) => {
+  const navigateToProject = (index, animate = true) => {
     setActiveIndex(index);
     
     if (carouselRef.current) {
       const cardWidth = carouselRef.current.children[0]?.offsetWidth || 0;
-      const gap = 16; // Taille de l'espace entre les cartes
+      const gap = 24; // Taille de l'espace entre les cartes
       
       const scrollPosition = index * (cardWidth + gap);
       
-      carouselRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: 'smooth'
-      });
+      if (animate) {
+        carouselControls.start({
+          x: -scrollPosition,
+          transition: { 
+            type: "spring", 
+            stiffness: 300, 
+            damping: 30,
+            duration: 0.8 
+          }
+        });
+      } else {
+        carouselControls.set({ x: -scrollPosition });
+      }
     }
   };
 
   // Fonction pour aller au projet suivant
   const nextProject = () => {
-    const newIndex = Math.min(activeIndex + 1, projects.length - 1);
+    const newIndex = (activeIndex + 1) % projects.length;
     navigateToProject(newIndex);
   };
 
   // Fonction pour aller au projet précédent
   const prevProject = () => {
-    const newIndex = Math.max(activeIndex - 1, 0);
+    const newIndex = activeIndex === 0 ? projects.length - 1 : activeIndex - 1;
     navigateToProject(newIndex);
   };
 
@@ -123,19 +157,49 @@ export default function ProjectCarousel({ projects }) {
     tap: { scale: 0.95 }
   };
 
+  // Gestion de la pause de l'autoplay au survol
+  const handleMouseEnter = () => setAutoplayPaused(true);
+  const handleMouseLeave = () => setAutoplayPaused(false);
+
   return (
-    <div className="relative w-full py-10 overflow-hidden">
+    <div 
+      className="relative w-full py-10 overflow-hidden"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Conteneur principal du carrousel */}
       <motion.div 
         className="overflow-hidden relative mx-auto px-4 sm:px-6"
       >
         <motion.div
           ref={carouselRef}
-          className="flex gap-4 cursor-grab"
+          className="flex gap-6"
+          animate={carouselControls}
+          initial={{ x: 0 }}
           drag="x"
           dragConstraints={{ right: 0, left: -width }}
-          onDragStart={() => setIsDragging(true)}
-          onDragEnd={() => setIsDragging(false)}
+          onDragStart={() => {
+            setIsDragging(true);
+            setAutoplayPaused(true);
+          }}
+          onDragEnd={(e, info) => {
+            setIsDragging(false);
+            setAutoplayPaused(false);
+            
+            // Déterminer si l'utilisateur a glissé suffisamment pour changer de slide
+            if (Math.abs(info.offset.x) > 100) {
+              if (info.offset.x > 0) {
+                prevProject();
+              } else {
+                nextProject();
+              }
+            } else {
+              // Retourner à la position actuelle
+              navigateToProject(activeIndex);
+            }
+          }}
+          dragElastic={0.2}
+          dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
           whileTap={{ cursor: "grabbing" }}
         >
           {projects.map((project, index) => {
@@ -144,11 +208,11 @@ export default function ProjectCarousel({ projects }) {
             return (
               <motion.div
                 key={index}
-                className="min-w-[280px] sm:min-w-[320px] lg:min-w-[400px]"
-                initial={{ opacity: 0, y: 50 }}
+                className="min-w-[90vw] md:min-w-[80vw] lg:min-w-[60vw] aspect-[16/9] px-2"
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ 
                   opacity: 1, 
-                  y: 0,
+                  scale: 1,
                   transition: { 
                     delay: index * 0.1,
                     duration: 0.5,
@@ -157,20 +221,95 @@ export default function ProjectCarousel({ projects }) {
                 }}
               >
                 <motion.div
+                  className="h-full relative overflow-hidden rounded-xl border border-accent-light/20 bg-background-dark shadow-lg"
                   animate={{
                     ...floatingAnim.y.animate,
                     ...floatingAnim.x.animate,
                     ...floatingAnim.rotate.animate
                   }}
                 >
-                  <ProjectCard
-                    title={project.title}
-                    description={project.description}
-                    image={project.image}
-                    technologies={project.technologies}
-                    link={project.link}
-                    delay={0.1 * index}
-                  />
+                  <div className="grid md:grid-cols-[1fr_1fr] h-full">
+                    <div className="relative h-full overflow-hidden">
+                      <motion.div 
+                        className="absolute inset-0 bg-gradient-to-r from-accent/10 to-background-dark/50 z-10"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5, duration: 0.8 }}
+                      />
+                      <motion.div
+                        className="h-full w-full"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <div className="relative h-full w-full">
+                          <img
+                            src={project.image}
+                            alt={project.title}
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
+                      </motion.div>
+                    </div>
+                    
+                    <div className="p-6 flex flex-col justify-center">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                      >
+                        <motion.h3 
+                          className="text-2xl md:text-3xl font-bold mb-4 text-accent"
+                          whileHover={{ x: 5 }}
+                        >
+                          {project.title}
+                        </motion.h3>
+                        
+                        <motion.p className="text-gray-light mb-6">
+                          {project.description}
+                        </motion.p>
+                        
+                        <div className="flex flex-wrap gap-2 mb-8">
+                          {project.technologies.map((tech, techIndex) => (
+                            <motion.span
+                              key={techIndex}
+                              className="px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent"
+                              whileHover={{ scale: 1.1, y: -2 }}
+                            >
+                              {tech}
+                            </motion.span>
+                          ))}
+                        </div>
+                        
+                        <div className="flex gap-4">
+                          {project.link && (
+                            <motion.a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-primary btn-sm"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              Voir le projet
+                            </motion.a>
+                          )}
+                          
+                          {project.github && (
+                            <motion.a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-ghost btn-sm"
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              Code source
+                            </motion.a>
+                          )}
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
                 </motion.div>
               </motion.div>
             );
@@ -196,12 +335,31 @@ export default function ProjectCarousel({ projects }) {
         />
       </div>
 
+      {/* Indicateur de progression */}
+      <motion.div 
+        className="w-full max-w-4xl mx-auto mt-8 px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        <div className="h-1 bg-accent/10 rounded-full overflow-hidden">
+          <motion.div 
+            className="h-full bg-accent"
+            initial={{ width: `${(1 / projects.length) * 100}%`, x: `${activeIndex * 100}%` }}
+            animate={{ 
+              width: `${(1 / projects.length) * 100}%`, 
+              x: `${activeIndex * (100 / projects.length) * (projects.length / (projects.length - 1 || 1))}%` 
+            }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
+      </motion.div>
+
       {/* Boutons de navigation */}
       <div className="flex justify-center mt-8 gap-4">
         <motion.button
           className="w-12 h-12 rounded-full bg-background-dark border border-accent/30 flex items-center justify-center shadow-md text-accent transition-all"
           onClick={prevProject}
-          disabled={activeIndex === 0}
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
@@ -229,7 +387,6 @@ export default function ProjectCarousel({ projects }) {
         <motion.button
           className="w-12 h-12 rounded-full bg-background-dark border border-accent/30 flex items-center justify-center shadow-md text-accent transition-all"
           onClick={nextProject}
-          disabled={activeIndex === projects.length - 1}
           variants={buttonVariants}
           initial="initial"
           whileHover="hover"
@@ -241,6 +398,16 @@ export default function ProjectCarousel({ projects }) {
           </svg>
         </motion.button>
       </div>
+      
+      {/* Indicateur de pause/lecture */}
+      <motion.div 
+        className="absolute bottom-2 right-2 text-xs text-accent/70"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: autoplayPaused ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {autoplayPaused ? "Pause" : "Lecture auto"}
+      </motion.div>
     </div>
   );
 } 

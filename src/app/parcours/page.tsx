@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
@@ -203,7 +202,7 @@ export default function Parcours() {
             transition={{ duration: 0.5 }}
           >
             <Link href="/" className="btn btn-primary">
-              Retour à l'accueil
+              Retour à l&apos;accueil
             </Link>
           </motion.div>
         </div>

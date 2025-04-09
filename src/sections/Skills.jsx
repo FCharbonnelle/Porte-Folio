@@ -5,16 +5,16 @@ import { techIcons } from '@/data/techIcons';
 
 const SkillBadge = ({ skill }) => (
   <div 
-    className="skill-badge group bg-black/40 hover:bg-indigo-900/50 border-2 border-indigo-600 hover:border-indigo-400 hover:scale-105 transition-all flex items-center p-4 rounded-lg shadow-md backdrop-blur-sm"
+    className="skill-badge group bg-accent/5 hover:bg-accent/10 border border-accent/20 hover:border-accent/40 hover:scale-105 transition-all flex items-center p-3 rounded-lg shadow-md backdrop-blur-sm float-small"
   >
-    <span className="text-indigo-300 group-hover:text-white font-medium text-lg">{skill}</span>
+    <span className="text-accent group-hover:text-foreground font-medium text-base md:text-lg">{skill}</span>
   </div>
 );
 
 const SkillCategory = ({ title, skills }) => (
-  <div className="mb-10">
-    <h3 className="text-xl font-bold mb-4 text-indigo-300 bg-black/50 inline-block px-4 py-1 rounded-md">{title}</h3>
-    <div className="flex flex-wrap gap-4 justify-center">
+  <div className="mb-8 md:mb-10">
+    <h3 className="text-lg md:text-xl font-bold mb-4 text-foreground bg-accent/5 inline-block px-4 py-1 rounded-md border border-accent/10 float">{title}</h3>
+    <div className="flex flex-wrap gap-2 md:gap-4 justify-center">
       {skills.map((skill, index) => (
         <SkillBadge key={index} skill={skill} />
       ))}
@@ -45,23 +45,17 @@ export default function Skills() {
   ];
 
   return (
-    <section id="skills" className="py-20">
+    <section id="skills" className="py-16 md:py-20">
       <div className="container-wide">
         <div className="w-full">
-          <span className="badge mb-3 inline-block">Compétences</span>
-          <h2 className="mb-5">Expertise technique</h2>
-          <p className="mb-10 max-w-2xl mx-auto">Voici les technologies et outils que j'utilise pour créer des expériences numériques élégantes et performantes.</p>
+          <span className="badge mb-3 inline-block float-small">Compétences</span>
+          <h2 className="mb-3 md:mb-5 float">Expertise technique</h2>
+          <p className="mb-8 md:mb-10 max-w-2xl mx-auto">Voici les technologies et outils que j'utilise pour créer des expériences numériques élégantes et performantes.</p>
         </div>
 
         <div className="fade-in-up grid grid-cols-1 gap-10">
           <div 
-            className="md:col-span-2 bg-background/60 rounded-2xl p-8 border border-accent-light/20 shadow-soft text-center"
-            style={{ 
-              backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/code-bg.webp')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundBlendMode: "normal"
-            }}
+            className="md:col-span-2 rounded-xl md:rounded-2xl p-6 md:p-8 border border-white/10 bg-background/5 backdrop-blur-sm shadow-xl text-center"
           >
             {skillsData.map((category, index) => (
               <SkillCategory 

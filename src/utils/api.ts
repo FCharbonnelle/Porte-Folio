@@ -9,7 +9,7 @@ export async function fetchData<T>(url: string): Promise<T> {
   return await response.json();
 }
 
-export async function postData<T>(url: string, data: any): Promise<T> {
+export async function postData<T, D = Record<string, unknown>>(url: string, data: D): Promise<T> {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -25,7 +25,7 @@ export async function postData<T>(url: string, data: any): Promise<T> {
   return await response.json();
 }
 
-export async function updateData<T>(url: string, data: any): Promise<T> {
+export async function updateData<T, D = Record<string, unknown>>(url: string, data: D): Promise<T> {
   const response = await fetch(url, {
     method: 'PUT',
     headers: {

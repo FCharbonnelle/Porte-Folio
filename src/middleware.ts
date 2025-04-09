@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function middleware(_request: NextRequest) {
+  // Le paramètre request est préfixé avec _ pour indiquer qu'il n'est pas utilisé
   // Vous pouvez ajouter ici votre logique de middleware
   // Par exemple, vérification d'authentification, redirection, etc.
   return NextResponse.next()

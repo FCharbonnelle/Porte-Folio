@@ -27,6 +27,12 @@
   --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
   --shadow-button: 0 4px 6px -1px rgba(56, 189, 248, 0.2), 0 2px 4px -2px rgba(56, 189, 248, 0.1);
   --easing: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Valeurs RGB pour les effets de gradient */
+  --background-rgb: 248, 250, 252;
+  --foreground-rgb: 15, 23, 42;
+  --accent-rgb: 56, 189, 248;
+  --accent-light-rgb: 186, 230, 253;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +48,12 @@
     --shadow-soft: 0 5px 20px -5px rgba(0, 0, 0, 0.25);
     --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
     --shadow-button: 0 4px 6px -1px rgba(125, 211, 252, 0.3), 0 2px 4px -2px rgba(125, 211, 252, 0.2);
+    
+    /* Valeurs RGB pour le mode sombre */
+    --background-rgb: 15, 23, 42;
+    --foreground-rgb: 248, 250, 252;
+    --accent-rgb: 125, 211, 252;
+    --accent-light-rgb: 56, 189, 248;
   }
 }
 
@@ -406,5 +418,130 @@ section {
 }
 
 .mouse-effect:hover::after {
+  opacity: 1;
+}
+
+/* Styles pour le défilement horizontal infini */
+.infinite-scroll-container {
+  height: 100vh;
+  overflow: hidden;
+  touch-action: pan-y;
+  position: relative;
+}
+
+.infinite-slide {
+  will-change: transform, opacity;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Effet de profondeur pour les slides */
+.slide-depth::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(var(--background-rgb), 0.7) 0%,
+    rgba(var(--background-rgb), 0) 15%,
+    rgba(var(--background-rgb), 0) 85%,
+    rgba(var(--background-rgb), 0.7) 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Effet de parallaxe pour les images */
+.parallax-image {
+  transition: transform 0.1s ease-out;
+}
+
+/* Personnalisation du curseur selon l'état */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}
+
+/* Indicateurs de pagination améliorés */
+.pagination-indicator {
+  transition: width 0.4s var(--easing), background-color 0.4s var(--easing);
+}
+
+.pagination-indicator.active {
+  width: 24px;
+  background-color: var(--accent);
+}
+
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .infinite-slide-transition {
+    transition: none !important;
+  }
+}
+
+/* Optimisations pour les écrans tactiles */
+@media (pointer: coarse) {
+  .swipe-hint {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.7;
+    animation: swipeHint 3s infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes swipeHint {
+    0% { transform: translateX(-70px); opacity: 0; }
+    20% { opacity: 0.7; }
+    80% { opacity: 0.7; }
+    100% { transform: translateX(70px); opacity: 0; }
+  }
+}
+
+/* Superposition d'éléments */
+.layer-overlay {
+  z-index: 5;
+  mix-blend-mode: overlay;
+}
+
+/* Effet de décalage au survol */
+.hover-offset {
+  transition: transform 0.25s var(--easing);
+}
+
+.hover-offset:hover {
+  transform: translateY(-5px);
+}
+
+/* Débordement du contenu avec effet de masquage progressif */
+.fade-overflow {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Effet de surbrillance au survol */
+.hover-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(var(--accent-rgb), 0.1) 0%,
+    rgba(var(--accent-rgb), 0) 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s var(--easing);
+  pointer-events: none;
+}
+
+.hover-glow:hover::before {
   opacity: 1;
 }

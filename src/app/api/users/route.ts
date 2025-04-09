@@ -15,16 +15,19 @@ const users = [
   }
 ];
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json(users);
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const body = await request.json();
+    // La variable body est commentée pour éviter l'erreur ESLint
+    // mais conservée en commentaire pour une implémentation future
+    // const body = await request.json();
+    
     // Logique pour ajouter un nouvel utilisateur
     return NextResponse.json({ success: true, message: 'Utilisateur créé avec succès' });
-  } catch (error) {
+  } catch (_err) {
     return NextResponse.json({ success: false, message: 'Erreur lors de la création de l\'utilisateur' }, { status: 400 });
   }
 } 

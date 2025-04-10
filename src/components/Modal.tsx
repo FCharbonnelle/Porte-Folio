@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,6 +14,7 @@ interface ModalProps {
 
 export default function Modal({ open, onClose, title, children, imageSrc }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -22,22 +23,28 @@ export default function Modal({ open, onClose, title, children, imageSrc }: Moda
     
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        e.stopPropagation();
         onClose();
       }
     };
     
     if (open) {
       document.addEventListener('keydown', handleEsc);
-      document.addEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'hidden'; // Empêcher le défilement du corps
+      document.addEventListener('mouseup', handleClickOutside);
+      document.body.style.overflow = 'hidden';
     }
     
     return () => {
       document.removeEventListener('keydown', handleEsc);
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'visible'; // Réactiver le défilement du corps
+      document.removeEventListener('mouseup', handleClickOutside);
+      document.body.style.overflow = 'visible';
+      setImageLoaded(false);
     };
   }, [open, onClose]);
+
+  const handleImageLoad = (e: any) => {
+    setImageLoaded(true);
+  };
 
   if (!open) return null;
 
@@ -45,15 +52,19 @@ export default function Modal({ open, onClose, title, children, imageSrc }: Moda
     <AnimatePresence>
       {open && (
         <motion.div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/40 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xl bg-black/60"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
         >
           <motion.div 
             ref={modalRef}
-            className="bg-background rounded-lg max-w-3xl w-full max-h-[90vh] overflow-auto shadow-card border border-accent-light/60"
+            className="bg-background/80 rounded-xl w-[80%] h-[80vh] overflow-hidden border border-accent/30 shadow-[0_0_30px_rgba(var(--color-accent-rgb),0.2)]"
             initial={{ scale: 0.9, y: 20, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.9, y: 20, opacity: 0 }}
@@ -63,62 +74,71 @@ export default function Modal({ open, onClose, title, children, imageSrc }: Moda
               damping: 30,
               delay: 0.1
             }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div 
-              className="sticky top-0 bg-background/90 p-4 border-b border-accent-light/30 flex justify-between items-center z-10 backdrop-blur-xs"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-            >
-              <h3 className="text-xl font-medium text-accent">{title}</h3>
-              <motion.button 
-                onClick={onClose}
-                className="text-gray-dark hover:text-accent transition-colors p-2 rounded-full hover:bg-accent/5"
-                aria-label="Fermer"
-                whileHover={{ rotate: 90 }}
-                transition={{ duration: 0.2 }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </motion.button>
-            </motion.div>
-            
-            <div className="p-6">
+            <div className="flex flex-col md:flex-row h-full">
+              {/* Partie image */}
               {imageSrc && (
                 <motion.div 
-                  className="relative mx-auto w-full max-w-[640px] aspect-square mb-6 rounded-lg overflow-hidden border border-accent-light/40 shadow-soft"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="relative bg-background/80 flex-shrink-0 w-full md:w-[60%] h-[50%] md:h-full flex items-start justify-start"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: imageLoaded ? 1 : 0 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center bg-accent/5">
-                    <motion.div
-                      className="w-full h-full relative"
-                      initial={{ scale: 1.1 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                    >
-                      <Image 
-                        src={imageSrc} 
-                        alt={title} 
-                        fill 
-                        className="object-contain"
-                        priority
-                        unoptimized
-                      />
-                    </motion.div>
+                  <div className="relative w-full h-full">
+                    <Image 
+                      src={imageSrc} 
+                      alt={title}
+                      fill
+                      sizes="(max-width: 768px) 80vw, 50vw"
+                      className="object-contain object-left"
+                      priority
+                      unoptimized
+                      onLoad={handleImageLoad}
+                    />
                   </div>
+                  
+                  {/* Bouton de fermeture */}
+                  <motion.button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white z-10"
+                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(var(--color-accent-rgb), 0.5)' }}
+                    whileTap={{ scale: 0.9 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </motion.button>
                 </motion.div>
               )}
               
+              {/* Partie contenu */}
               <motion.div 
-                className="space-y-4 p-4 bg-background rounded-lg border border-gray-light/70 shadow-soft"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
+                className="w-full md:w-[40%] overflow-auto p-5 md:p-8 bg-background/90 h-[50%] md:h-full"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
               >
-                {children}
+                <motion.h3 
+                  className="text-2xl md:text-3xl font-bold text-accent mb-6"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                >
+                  {title}
+                </motion.h3>
+                
+                <motion.div 
+                  className="space-y-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  {children}
+                </motion.div>
               </motion.div>
             </div>
           </motion.div>

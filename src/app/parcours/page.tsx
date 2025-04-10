@@ -3,18 +3,59 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Modal from '@/components/Modal';
 import { parcoursData, ParcoursItem } from '@/data/parcoursData';
 import { motion, useAnimation, useMotionValue, AnimatePresence } from 'framer-motion';
+
+// Fonction pour créer un effet de flottement avec des paramètres aléatoires
+const generateFloatingAnimation = (index: number) => {
+  // Valeurs légèrement différentes pour chaque carte, basées sur leur index
+  const baseDelay = 0.1 + (index * 0.2) % 1;
+  const baseDuration = 4 + (index % 3);
+  
+  // Valeurs d'offset aléatoires mais légères
+  const yOffset = 4 + (index % 3);
+  const xOffset = 2 + (index % 2);
+  const rotateOffset = 0.5 + (index % 2) * 0.3;
+  
+  return {
+    y: [`${-yOffset/2}px`, `${yOffset/2}px`, `${-yOffset/2}px`],
+    x: [`${-xOffset/2}px`, `${xOffset/2}px`, `${-xOffset/2}px`],
+    rotate: [`${-rotateOffset/2}deg`, `${rotateOffset/2}deg`, `${-rotateOffset/2}deg`],
+    transition: {
+      y: {
+        repeat: Infinity,
+        repeatType: "loop" as const,
+        duration: baseDuration,
+        ease: "easeInOut",
+        delay: baseDelay,
+        times: [0, 0.5, 1]
+      },
+      x: {
+        repeat: Infinity,
+        repeatType: "loop" as const,
+        duration: baseDuration + 0.5,
+        ease: "easeInOut",
+        delay: baseDelay + 0.2,
+        times: [0, 0.5, 1]
+      },
+      rotate: {
+        repeat: Infinity,
+        repeatType: "loop" as const,
+        duration: baseDuration + 1,
+        ease: "easeInOut",
+        delay: baseDelay + 0.3,
+        times: [0, 0.5, 1]
+      }
+    }
+  };
+};
 
 export default function Parcours() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ParcoursItem & { section: string, index: number } | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [dragStartX, setDragStartX] = useState(0);
-  const [expanded, setExpanded] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Get all items from parcoursData as a flat array with section info
@@ -35,12 +76,10 @@ export default function Parcours() {
   
   const handlePrevious = () => {
     setCurrentSection(prev => (prev > 0 ? prev - 1 : parcoursData.length - 1));
-    setExpanded(null);
   };
   
   const handleNext = () => {
     setCurrentSection(prev => (prev < parcoursData.length - 1 ? prev + 1 : 0));
-    setExpanded(null);
   };
   
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -58,14 +97,10 @@ export default function Parcours() {
     }
   };
 
-  const toggleExpand = (index: number) => {
-    if (expanded === index) {
-      // Quand on clique sur une carte déjà élargie, ouvrir la modale
-      const item = parcoursData[currentSection].items[index];
-      openModal(item, parcoursData[currentSection].section, index);
-    } else {
-      setExpanded(index);
-    }
+  // Ouvre directement la modale au clic sur un élément
+  const handleItemClick = (index: number) => {
+    const item = parcoursData[currentSection].items[index];
+    openModal(item, parcoursData[currentSection].section, index);
   };
 
   // Image mapping for items
@@ -76,8 +111,26 @@ export default function Parcours() {
       "Baccalauréat STI génie productique mécanique": "/assets/parcours/bac-sti.jpg",
       "BEP Electronique": "/assets/parcours/bep-elec.jpg",
       "Conseiller de vente Equipements de la Maison": "/assets/parcours/conseiller.jpg",
-      "Conseiller de vente en téléphonie": "/assets/parcours/telecom.jpg",
-      "Vendeur logithèque": "/assets/parcours/vendeur-fnac.jpg"
+      "Conseiller de vente en téléphonie": "/assets/parcours/conseiller_orange.jpg",
+      "Vendeur logithèque": "/assets/parcours/vendeur-fnac.jpg",
+      "Vendeur matériel Informatique et Musique": "/assets/parcours/cash_converters.jpg",
+      "Créer, élaborer et identifier des concepts innovants": "/assets/parcours/competence1.jpg",
+      "Actualiser régulièrement ses connaissances": "/assets/parcours/competence2.jpg",
+      "Recueillir et analyser les besoins client": "/assets/parcours/competence3.jpg",
+      "Présenter et valoriser un produit ou un service": "/assets/parcours/competence4.jpg",
+      "Accompagner l'appropriation d'un outil par ses utilisateurs": "/assets/parcours/competence5.jpg",
+      "Français": "/assets/parcours/competence6.jpg",
+      "Anglais": "/assets/parcours/competence7.jpg",
+      "Travailler en équipe": "/assets/parcours/competence8.jpg",
+      "S'adapter aux changements": "/assets/parcours/competence9.jpg",
+      "Faire preuve de curiosité": "/assets/parcours/competence10.jpg",
+      "Faire preuve de créativité, d'inventivité": "/assets/parcours/competence11.jpg",
+      "Faire preuve de persévérance": "/assets/parcours/competence12.jpg",
+      "Faire preuve de rigueur et de précision": "/assets/parcours/competence13.jpg",
+      "Gérer son stress": "/assets/parcours/competence14.jpg",
+      "Sorties entre amis": "/assets/parcours/competence15.jpg",
+      "Bowling, Billard, Basketball": "/assets/parcours/competence16.jpg",
+      "Jeux vidéos multi-joueurs en ligne": "/assets/parcours/competence17.jpg"
     };
     
     return imageMap[title] || "/assets/placeholder.jpg";
@@ -136,10 +189,9 @@ export default function Parcours() {
 
   return (
     <div className="relative h-screen overflow-hidden bg-gradient-to-b from-background to-background-secondary text-white flex flex-col">
-      <Header />
       
       {/* Titre principal */}
-      <div className="pt-16 pb-1 text-center">
+      <div className="pt-8 pb-1 text-center">
         <motion.h1 
           className="text-xl md:text-3xl font-bold mb-1"
           initial={{ opacity: 0, y: -20 }}
@@ -154,31 +206,6 @@ export default function Parcours() {
           animate={{ width: "4rem" }}
           transition={{ delay: 0.3, duration: 0.8 }}
         />
-      </div>
-      
-      {/* Navigation des sections */}
-      <div className="flex justify-center mb-1 px-4">
-        <div className="flex gap-2 overflow-x-auto pb-1 max-w-full no-scrollbar">
-          {parcoursData.map((section, index) => (
-            <motion.button
-              key={section.section}
-              onClick={() => {
-                setCurrentSection(index);
-                setExpanded(null);
-              }}
-              className={`px-2 py-1 rounded-full whitespace-nowrap text-xs md:text-sm ${
-                currentSection === index 
-                  ? 'bg-accent text-white' 
-                  : 'bg-white/10 text-white/80 hover:bg-white/20'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="mr-1">{section.icon}</span>
-              {section.section}
-            </motion.button>
-          ))}
-        </div>
       </div>
       
       {/* Carrousel principal */}
@@ -204,19 +231,19 @@ export default function Parcours() {
               <div className="flex justify-center items-center gap-2 sm:gap-3 w-full max-w-[98vw] overflow-x-auto no-scrollbar">
                 {parcoursData[currentSection].items.map((item, index) => {
                   const imageSrc = getImageSrc(item.title);
-                  const isExpanded = expanded === index;
+                  const floatingAnim = generateFloatingAnimation(index);
                   
                   return (
                     <motion.div
                       key={index}
-                      className="relative h-[75vh] overflow-hidden rounded-xl cursor-pointer border-2 border-white/30 shadow-lg backdrop-blur-sm bg-white/5 flex-shrink-0"
+                      className="relative h-[70vh] overflow-hidden rounded-xl cursor-pointer border-2 border-white/30 shadow-lg backdrop-blur-sm bg-white/5 flex-shrink-0"
                       variants={cardVariants}
                       initial="initial"
-                      animate={isExpanded ? "expanded" : "initial"}
-                      whileHover={!isExpanded ? "hover" : "expanded"}
-                      onClick={() => toggleExpand(index)}
+                      animate={floatingAnim}
+                      whileHover="hover"
+                      onClick={() => handleItemClick(index)}
                       style={{
-                        boxShadow: isExpanded ? "0 25px 50px -12px rgba(0, 0, 0, 0.7)" : "0 10px 15px -3px rgba(0, 0, 0, 0.3)"
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)"
                       }}
                     >
                       {/* Image portrait en background */}
@@ -226,48 +253,29 @@ export default function Parcours() {
                           alt={item.title}
                           fill
                           style={{ 
-                            objectFit: isExpanded ? 'contain' : 'cover', 
+                            objectFit: 'cover', 
                             objectPosition: 'center',
                             transition: 'all 0.5s ease'
                           }}
                           priority
                         />
-                        <div className={`absolute inset-0 bg-black/40 transition-opacity duration-500 ${isExpanded ? 'opacity-0' : 'opacity-100'}`} />
                       </div>
                       
-                      {/* Titre vertical quand carte non expandée */}
-                      {!isExpanded && (
-                        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                          <div className="hidden sm:flex md:hidden rotate-90 whitespace-nowrap text-3xl font-bold text-white drop-shadow-lg truncate max-w-[650px]">
-                            {getTruncatedTitle(item.title, 'sm')}
-                          </div>
-                          <div className="hidden md:flex lg:hidden rotate-90 whitespace-nowrap text-4xl font-bold text-white drop-shadow-lg truncate max-w-[700px]">
-                            {getTruncatedTitle(item.title, 'md')}
-                          </div>
-                          <div className="hidden lg:flex rotate-90 whitespace-nowrap text-5xl font-bold text-white drop-shadow-lg truncate max-w-[750px]">
-                            {getTruncatedTitle(item.title, 'lg')}
-                          </div>
-                          <div className="flex sm:hidden rotate-90 whitespace-nowrap text-2xl font-bold text-white drop-shadow-lg truncate max-w-[600px]">
-                            {getTruncatedTitle(item.title, 'sm')}
-                          </div>
+                      {/* Titre vertical */}
+                      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                        <div className="hidden sm:flex md:hidden rotate-90 whitespace-nowrap text-3xl font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] truncate max-w-[650px]">
+                          {getTruncatedTitle(item.title, 'sm')}
                         </div>
-                      )}
-                      
-                      {/* Contenu quand carte expandée */}
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div 
-                            className="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-black/80 to-transparent"
-                            variants={labelVariants}
-                            initial="initial"
-                            animate="expanded"
-                          >
-                            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-white drop-shadow-lg">{item.title}</h3>
-                            {item.date && <p className="text-lg md:text-xl text-white/90 mb-2">{item.date}</p>}
-                            {item.lieu && <p className="text-lg md:text-xl text-white/90 mb-4">{item.lieu}</p>}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                        <div className="hidden md:flex lg:hidden rotate-90 whitespace-nowrap text-4xl font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] truncate max-w-[700px]">
+                          {getTruncatedTitle(item.title, 'md')}
+                        </div>
+                        <div className="hidden lg:flex rotate-90 whitespace-nowrap text-5xl font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] truncate max-w-[750px]">
+                          {getTruncatedTitle(item.title, 'lg')}
+                        </div>
+                        <div className="flex sm:hidden rotate-90 whitespace-nowrap text-2xl font-bold text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] truncate max-w-[600px]">
+                          {getTruncatedTitle(item.title, 'sm')}
+                        </div>
+                      </div>
                     </motion.div>
                   );
                 })}
@@ -278,22 +286,46 @@ export default function Parcours() {
         
         {/* Boutons navigation */}
         <motion.button
-          className="absolute left-1 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center z-10 border border-white/30"
+          className="absolute left-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-1 pr-3 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white z-10 border border-white/30"
           onClick={handlePrevious}
-          whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+          whileTap={{ scale: 0.95 }}
+          animate={{
+            x: ["-2px", "0px", "-2px"],
+            transition: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 2,
+              ease: "easeInOut"
+            }
+          }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 19L8 12L15 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
+          <span className="hidden sm:inline text-sm font-medium">
+            {parcoursData[(currentSection > 0 ? currentSection - 1 : parcoursData.length - 1)].section}
+          </span>
         </motion.button>
         
         <motion.button
-          className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center z-10 border border-white/30"
+          className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-3 pr-1 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white z-10 border border-white/30"
           onClick={handleNext}
-          whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
-          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
+          whileTap={{ scale: 0.95 }}
+          animate={{
+            x: ["2px", "0px", "2px"],
+            transition: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 2,
+              ease: "easeInOut"
+            }
+          }}
         >
+          <span className="hidden sm:inline text-sm font-medium">
+            {parcoursData[(currentSection < parcoursData.length - 1 ? currentSection + 1 : 0)].section}
+          </span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 5L16 12L9 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -301,30 +333,58 @@ export default function Parcours() {
       </div>
       
       {/* Indicateur de section actuelle et bouton retour */}
-      <div className="py-2 flex items-center justify-center">
-        <div className="flex gap-2 mr-6">
-          {parcoursData.map((_, index) => (
-            <motion.button
-              key={index}
-              className={`w-1.5 h-1.5 rounded-full ${currentSection === index ? 'bg-accent' : 'bg-white/30'}`}
-              onClick={() => {
-                setCurrentSection(index);
-                setExpanded(null);
+      <div className="py-3 flex items-center justify-center mb-2">
+        <div className="flex items-center mr-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSection}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ 
+                opacity: 1,
+                y: ["0px", "-3px", "0px"],
+                transition: {
+                  opacity: { duration: 0.3 },
+                  y: {
+                    repeat: Infinity,
+                    repeatType: "loop" as const,
+                    duration: 3,
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1]
+                  }
+                }
               }}
-              whileHover={{ scale: 1.5 }}
-            />
-          ))}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-accent/80 px-3 py-1 rounded-full text-white text-sm font-medium flex items-center"
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(var(--color-accent-rgb), 0.9)" }}
+            >
+              <span className="mr-1">{parcoursData[currentSection].icon}</span>
+              {parcoursData[currentSection].section}
+            </motion.div>
+          </AnimatePresence>
         </div>
         
-        <Link 
-          href="/"
-          className="inline-block px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-all duration-300"
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{
+            y: ["0px", "-2px", "0px"],
+            transition: {
+              repeat: Infinity,
+              repeatType: "loop" as const,
+              duration: 2,
+              ease: "easeInOut",
+              times: [0, 0.5, 1]
+            }
+          }}
         >
-          Retour à l'accueil
-        </Link>
+          <Link 
+            href="/"
+            className="inline-block px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-all duration-300"
+          >
+            Retour à l'accueil
+          </Link>
+        </motion.div>
       </div>
-      
-      <Footer />
       
       {/* Modal pour afficher les détails */}
       {selectedItem && (
@@ -334,24 +394,24 @@ export default function Parcours() {
           title={selectedItem.title}
           imageSrc={getImageSrc(selectedItem.title)}
         >
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center text-center">
             {selectedItem.date && (
               <div>
-                <h4 className="text-sm font-medium text-gray-dark mb-1">Période</h4>
-                <p className="bg-accent/5 p-2 rounded-md border border-accent-light">{selectedItem.date}</p>
+                <h4 className="text-base font-medium mb-1">Période</h4>
+                <p className="font-semibold">{selectedItem.date}</p>
               </div>
             )}
             
             {selectedItem.lieu && (
               <div>
-                <h4 className="text-sm font-medium text-gray-dark mb-1">Lieu</h4>
-                <p className="bg-accent/5 p-2 rounded-md border border-accent-light">{selectedItem.lieu}</p>
+                <h4 className="text-base font-medium mb-1">Lieu</h4>
+                <p className="font-semibold">{selectedItem.lieu}</p>
               </div>
             )}
             
             <div>
-              <h4 className="text-sm font-medium text-gray-dark mb-1">Catégorie</h4>
-              <p className="bg-accent/5 p-2 rounded-md border border-accent-light flex items-center">
+              <h4 className="text-base font-medium mb-1">Catégorie</h4>
+              <p className="flex items-center justify-center">
                 <span className="mr-2">{parcoursData.find(s => s.section === selectedItem.section)?.icon}</span>
                 {selectedItem.section}
               </p>
@@ -359,14 +419,14 @@ export default function Parcours() {
             
             {selectedItem.contact && (
               <div>
-                <h4 className="text-sm font-medium text-gray-dark mb-1">Contact</h4>
-                <p className="bg-accent/5 p-2 rounded-md border border-accent-light">
+                <h4 className="text-base font-medium mb-1">Contact</h4>
+                <p>
                   {selectedItem.contact.includes('@') ? (
-                    <a href={`mailto:${selectedItem.contact}`} className="text-accent hover:underline">
+                    <a href={`mailto:${selectedItem.contact}`} className="font-semibold underline hover:no-underline">
                       {selectedItem.contact}
                     </a>
                   ) : (
-                    <a href={selectedItem.contact} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                    <a href={selectedItem.contact} target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:no-underline">
                       Profil LinkedIn
                     </a>
                   )}

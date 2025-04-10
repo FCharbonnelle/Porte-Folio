@@ -1,0 +1,12 @@
+warning: in the working copy of 'src/app/parcours/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/Modal.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/sections/Hero.jsx', LF will be replaced by CRLF the next time Git touches it
+public/assets/parcours/conseiller.jpg
+public/assets/parcours/conseiller_orange.jpg
+public/assets/parcours/dwwm.jpg
+public/assets/parcours/telecom.jpg
+src/app/parcours/page.tsx
+src/components/Header.jsx
+src/components/Modal.tsx
+src/sections/Footer.jsx
+src/sections/Hero.jsx

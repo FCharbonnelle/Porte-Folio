@@ -60,7 +60,9 @@ export default function Header() {
           ? "py-4 text-white text-xl font-semibold border-b border-gray-light/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent text-left transition-all duration-200 hover:pl-2 hover:text-accent"
           : section.id === 'contact'
             ? "btn btn-primary flex items-center justify-center px-6 py-2 text-white font-medium rounded-md shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300"
-            : "nav-link font-semibold text-white hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md px-5 py-3 text-xl transition-all duration-200 tracking-wide shadow-sm hover:shadow-md"
+            : `nav-link font-semibold text-white hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md ${
+                isSticky ? 'px-4' : 'px-5'
+              } py-3 text-xl transition-all duration-200 tracking-wide shadow-sm hover:shadow-md`
         }
         onClick={() => handleNavigation(section)}
         onKeyDown={(e) => handleKeyDown(e, section)}
@@ -81,11 +83,11 @@ export default function Header() {
           : 'bg-transparent h-24 w-full left-0'
       }`}
     >
-      <div className={`h-full px-6 flex items-center justify-between ${
-        isSticky ? 'container mx-auto' : 'container-wide'
+      <div className={`h-full px-6 flex ${
+        isSticky ? 'items-center md:grid md:grid-cols-[auto_1fr_auto] md:gap-4' : 'items-center justify-between container-wide'
       }`}>
         {/* Logo */}
-        <Link href="/" className="relative z-10 group">
+        <Link href="/" className={`relative z-10 group ${isSticky ? 'justify-self-start' : ''}`}>
           <motion.div 
             className="font-space font-bold text-2xl tracking-tight flex items-center"
             animate={generateFloatingAnimation(0, { intensity: 0.2, enableRotate: false })}
@@ -140,11 +142,16 @@ export default function Header() {
         </motion.button>
 
         {/* Navigation desktop */}
-        <nav className="hidden md:flex items-center justify-center gap-12 mx-auto">
+        <nav className={`hidden md:flex items-center ${
+          isSticky ? 'justify-self-center justify-center gap-6' : 'gap-12 mx-auto'
+        }`}>
           {NAV_SECTIONS.map((section, index) => (
             <NavButton key={section.id} section={section} index={index} />
           ))}
         </nav>
+
+        {/* Espace vide pour équilibrer en mode dock (seulement en desktop) */}
+        {isSticky && <div className="hidden md:block justify-self-end"></div>}
 
         {/* Navigation mobile */}
         <motion.div

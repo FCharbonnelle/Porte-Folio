@@ -89,7 +89,7 @@ const ProjectCard = ({ project, delay = 0 }) => {
   return (
     <HoverSpotlightWrapper>
       <motion.div
-        className="project-card w-full h-auto bg-transparent rounded-none md:rounded-2xl"
+        className="project-card w-full h-auto bg-transparent rounded-none md:rounded-2xl overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -131,7 +131,7 @@ const ProjectCard = ({ project, delay = 0 }) => {
           </div>
           
           {/* Contenu avec fond semi-transparent */}
-          <div className="relative flex flex-col p-4 md:p-6 md:w-1/2 bg-black/70 backdrop-blur-md h-auto md:min-h-full">
+          <div className="relative flex flex-col p-4 md:p-6 md:w-1/2 bg-black/70 backdrop-blur-md z-10 h-auto md:min-h-full">
             <div className="space-y-3">
               <div className="flex justify-between items-start">
                 <h3 className="text-xl md:text-2xl font-bold text-white">

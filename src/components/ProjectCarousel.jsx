@@ -3,60 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import ProjectCard from './ProjectCard';
-
-// Fonction pour créer un effet de flottement avec des paramètres aléatoires
-const generateFloatingAnimation = (index) => {
-  // Valeurs légèrement différentes pour chaque projet, basées sur leur index
-  const baseDelay = 0.1 + (index * 0.2) % 1;
-  const baseDuration = 4 + (index % 3);
-  
-  // Valeurs d'offset aléatoires mais légères
-  const yOffset = 4 + (index % 3);
-  const xOffset = 2 + (index % 2);
-  const rotateOffset = 0.5 + (index % 2) * 0.3;
-  
-  return {
-    y: {
-      animate: {
-        y: [`${-yOffset/2}px`, `${yOffset/2}px`, `${-yOffset/2}px`],
-        transition: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: baseDuration,
-          ease: "easeInOut",
-          delay: baseDelay,
-          times: [0, 0.5, 1]
-        }
-      }
-    },
-    x: {
-      animate: {
-        x: [`${-xOffset/2}px`, `${xOffset/2}px`, `${-xOffset/2}px`],
-        transition: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: baseDuration + 0.5,
-          ease: "easeInOut",
-          delay: baseDelay + 0.2,
-          times: [0, 0.5, 1]
-        }
-      }
-    },
-    rotate: {
-      animate: {
-        rotate: [`${-rotateOffset/2}deg`, `${rotateOffset/2}deg`, `${-rotateOffset/2}deg`],
-        transition: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: baseDuration + 1,
-          ease: "easeInOut",
-          delay: baseDelay + 0.3,
-          times: [0, 0.5, 1]
-        }
-      }
-    }
-  };
-};
+import { generateFloatingAnimation } from '../utils/animationUtils';
 
 export default function ProjectCarousel({ projects }) {
   const [width, setWidth] = useState(0);
@@ -208,7 +155,7 @@ export default function ProjectCarousel({ projects }) {
             return (
               <motion.div
                 key={index}
-                className="min-w-[90vw] md:min-w-[80vw] lg:min-w-[60vw] aspect-[16/9] px-2"
+                className="min-w-[90vw] md:min-w-[80vw] lg:min-w-[60vw] px-2"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ 
                   opacity: 1, 
@@ -221,30 +168,25 @@ export default function ProjectCarousel({ projects }) {
                 }}
               >
                 <motion.div
-                  className="h-full relative overflow-hidden rounded-xl border border-accent-light/20 bg-background-dark shadow-lg"
-                  animate={{
-                    ...floatingAnim.y.animate,
-                    ...floatingAnim.x.animate,
-                    ...floatingAnim.rotate.animate
-                  }}
+                  className="relative overflow-hidden rounded-xl border border-accent-light/20 bg-background-dark shadow-lg"
+                  animate={floatingAnim}
                 >
-                  <div className="grid md:grid-cols-[1.2fr_1fr] h-full">
-                    <div className="relative h-full overflow-hidden bg-white">
+                  <div className="grid md:grid-cols-[1.2fr_1fr]">
+                    <div className="relative overflow-hidden bg-white">
                       <motion.div
-                        className="h-full w-full flex items-center justify-center p-1"
+                        className="w-full flex items-center justify-center"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <div className="relative h-full w-full flex items-center justify-center">
+                        <div className="relative w-full flex items-center justify-center">
                           <img
                             src={project.image}
                             alt={project.title}
-                            className="max-w-full max-h-full w-auto h-auto"
+                            className="w-full h-auto object-cover"
                             style={{ 
-                              objectFit: 'contain', 
+                              objectFit: 'cover',
                               margin: '0 auto',
                               width: '100%',
-                              height: '100%'
                             }}
                           />
                         </div>

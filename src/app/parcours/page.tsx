@@ -6,50 +6,7 @@ import Image from 'next/image';
 import Modal from '@/components/Modal';
 import { parcoursData, ParcoursItem } from '@/data/parcoursData';
 import { motion, useAnimation, useMotionValue, AnimatePresence } from 'framer-motion';
-
-// Fonction pour créer un effet de flottement avec des paramètres aléatoires
-const generateFloatingAnimation = (index: number) => {
-  // Valeurs légèrement différentes pour chaque carte, basées sur leur index
-  const baseDelay = 0.1 + (index * 0.2) % 1;
-  const baseDuration = 4 + (index % 3);
-  
-  // Valeurs d'offset aléatoires mais légères
-  const yOffset = 4 + (index % 3);
-  const xOffset = 2 + (index % 2);
-  const rotateOffset = 0.5 + (index % 2) * 0.3;
-  
-  return {
-    y: [`${-yOffset/2}px`, `${yOffset/2}px`, `${-yOffset/2}px`],
-    x: [`${-xOffset/2}px`, `${xOffset/2}px`, `${-xOffset/2}px`],
-    rotate: [`${-rotateOffset/2}deg`, `${rotateOffset/2}deg`, `${-rotateOffset/2}deg`],
-    transition: {
-      y: {
-        repeat: Infinity,
-        repeatType: "loop" as const,
-        duration: baseDuration,
-        ease: "easeInOut",
-        delay: baseDelay,
-        times: [0, 0.5, 1]
-      },
-      x: {
-        repeat: Infinity,
-        repeatType: "loop" as const,
-        duration: baseDuration + 0.5,
-        ease: "easeInOut",
-        delay: baseDelay + 0.2,
-        times: [0, 0.5, 1]
-      },
-      rotate: {
-        repeat: Infinity,
-        repeatType: "loop" as const,
-        duration: baseDuration + 1,
-        ease: "easeInOut",
-        delay: baseDelay + 0.3,
-        times: [0, 0.5, 1]
-      }
-    }
-  };
-};
+import { generateFloatingAnimation } from '@/utils/animationUtils';
 
 export default function Parcours() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -239,7 +196,7 @@ export default function Parcours() {
                       className="relative h-[70vh] overflow-hidden rounded-xl cursor-pointer border-2 border-white/30 shadow-lg backdrop-blur-sm bg-white/5 flex-shrink-0"
                       variants={cardVariants}
                       initial="initial"
-                      animate={floatingAnim}
+                      animate={{ ...floatingAnim }}
                       whileHover="hover"
                       onClick={() => handleItemClick(index)}
                       style={{

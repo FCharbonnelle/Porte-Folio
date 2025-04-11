@@ -2,124 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, useAnimation, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-
-const ProjectCard = ({ project, delay }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
-  // Valeurs pour le suivi de la souris
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  
-  // Valeurs avec spring pour une animation plus fluide
-  const springX = useSpring(x, { damping: 50, stiffness: 400 });
-  const springY = useSpring(y, { damping: 50, stiffness: 400 });
-  
-  // Transformation des valeurs pour l'effet visuel
-  const rotateX = useTransform(springY, [-100, 100], [10, -10]);
-  const rotateY = useTransform(springX, [-100, 100], [-10, 10]);
-  const brightness = useTransform(springY, [-100, 100], [1.1, 0.9]);
-  
-  // Gérer le mouvement de la souris
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Calculer la distance par rapport au centre
-    const moveX = (e.clientX - centerX) / 5;
-    const moveY = (e.clientY - centerY) / 5;
-    
-    x.set(moveX);
-    y.set(moveY);
-  };
-  
-  return (
-    <motion.div
-      className="relative min-h-[300px] sm:min-h-[350px] md:min-h-[400px] rounded-xl md:rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-background/5 backdrop-blur-sm flex flex-col"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ 
-        opacity: 1, 
-        y: 0,
-        transition: { 
-          delay: delay * 0.1,
-          duration: 0.6,
-          ease: [0.22, 1, 0.36, 1]
-        }
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        x.set(0);
-        y.set(0);
-      }}
-      onMouseMove={handleMouseMove}
-      style={{
-        rotateX: isHovered ? rotateX : 0,
-        rotateY: isHovered ? rotateY : 0,
-        transformPerspective: 1000,
-        filter: isHovered ? `brightness(${brightness})` : 'brightness(1)'
-      }}
-      whileHover={{ 
-        scale: 1.02,
-        transition: { duration: 0.2 }
-      }}
-    >
-      {/* Image du projet */}
-      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden bg-white">
-        <motion.div
-          className="h-full w-full flex items-center justify-center"
-          style={{
-            scale: isHovered ? 1.05 : 1,
-            transition: "scale 0.2s ease"
-          }}
-        >
-          <img 
-            src={project.image} 
-            alt={project.title} 
-            className="w-full h-full object-cover" 
-          />
-        </motion.div>
-      </div>
-
-      {/* Contenu du projet */}
-      <div className="flex flex-col flex-grow p-4 sm:p-5 md:p-6">
-        <motion.h3 
-          className="text-lg sm:text-xl md:text-2xl font-bold mb-1 text-white"
-          style={{
-            translateY: isHovered ? -5 : 0
-          }}
-        >
-          {project.title}
-        </motion.h3>
-        <motion.p 
-          className="text-sm text-white/70 mb-3 line-clamp-3"
-          style={{
-            translateY: isHovered ? -3 : 0
-          }}
-        >
-          {project.description}
-        </motion.p>
-        <div className="mt-auto">
-          <motion.div 
-            className="flex gap-2 flex-wrap"
-            style={{
-              translateY: isHovered ? -2 : 0
-            }}
-          >
-            {project.tags.map((tag, tagIndex) => (
-              <span 
-                key={tagIndex} 
-                className="text-xs px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/80"
-              >
-                {tag}
-              </span>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
+import ProjectCard from './ProjectCard';
 
 const InfiniteHorizontalScroll = ({ projects }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -136,20 +19,13 @@ const InfiniteHorizontalScroll = ({ projects }) => {
 
   // Fonction pour obtenir les indices des projets visibles
   const getVisibleProjects = useCallback(() => {
-    // Afficher 2 projets à la fois
+    // N'afficher qu'un seul projet à la fois pour s'adapter au nouveau design horizontal
     const visibleProjects = [];
-    const startIndex = Math.floor(currentIndex / 2) * 2;
+    const startIndex = currentIndex;
     
-    // Ajouter jusqu'à 2 projets
-    for (let i = 0; i < 2; i++) {
-      if (startIndex + i < projects.length) {
-        visibleProjects.push(startIndex + i);
-      }
-    }
-    
-    // Si nous n'avons pas 2 projets, compléter le reste avec des projets du début
-    while (visibleProjects.length < 2) {
-      visibleProjects.push(visibleProjects.length);
+    // Ajouter le projet actuel
+    if (startIndex < projects.length) {
+      visibleProjects.push(startIndex);
     }
     
     return visibleProjects;
@@ -194,12 +70,12 @@ const InfiniteHorizontalScroll = ({ projects }) => {
       setDirection(newDirection);
       setIsTransitioning(true);
       
-      // Navigation par groupe de 3
+      // Navigation projet par projet
       if (newDirection > 0) {
-        const newIndex = Math.min(projects.length - 1, Math.floor(currentIndex / 3) * 3 + 3);
+        const newIndex = (currentIndex + 1) % projects.length;
         setCurrentIndex(newIndex);
       } else {
-        const newIndex = Math.max(0, Math.floor(currentIndex / 3) * 3 - 3);
+        const newIndex = (currentIndex - 1 + projects.length) % projects.length;
         setCurrentIndex(newIndex);
       }
       
@@ -259,21 +135,37 @@ const InfiniteHorizontalScroll = ({ projects }) => {
 
   // Fonction pour naviguer vers la page précédente
   const handlePrevious = useCallback(() => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setDirection(-1);
+    
     setCurrentIndex((prevIndex) => {
-      // Déplacer par groupe de 2 projets
-      const newIndex = prevIndex - 2;
-      return newIndex < 0 ? projects.length - (projects.length % 2 || 2) : newIndex;
+      const newIndex = (prevIndex - 1 + projects.length) % projects.length;
+      return newIndex;
     });
-  }, [projects.length]);
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 500);
+  }, [projects.length, isTransitioning]);
 
   // Fonction pour naviguer vers la page suivante
   const handleNext = useCallback(() => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setDirection(1);
+    
     setCurrentIndex((prevIndex) => {
-      // Déplacer par groupe de 2 projets
-      const newIndex = prevIndex + 2;
-      return newIndex >= projects.length ? 0 : newIndex;
+      const newIndex = (prevIndex + 1) % projects.length;
+      return newIndex;
     });
-  }, [projects.length]);
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 500);
+  }, [projects.length, isTransitioning]);
 
   // Ajouter les écouteurs d'événements
   useEffect(() => {
@@ -316,7 +208,7 @@ const InfiniteHorizontalScroll = ({ projects }) => {
     return () => {
       if (autoScrollInterval) clearInterval(autoScrollInterval);
     };
-  }, [isDragging, isTransitioning]);
+  }, [isDragging, isTransitioning, handleNext]);
 
   // Calculer le décalage de parallaxe basé sur la position de la souris
   const calculateParallaxOffset = (depth = 1) => {
@@ -340,13 +232,37 @@ const InfiniteHorizontalScroll = ({ projects }) => {
     tap: { scale: 0.95 }
   };
 
+  // Variantes pour l'animation des slides
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.4 }
+      }
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? -1000 : 1000,
+      opacity: 0,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.4 }
+      }
+    })
+  };
+
   // Indices des projets visibles
   const visibleProjects = getVisibleProjects();
 
   return (
     <div 
       ref={containerRef}
-      className="infinite-scroll-container relative min-h-screen w-screen overflow-hidden bg-background hover-glow py-8 md:py-16"
+      className="infinite-scroll-container relative min-h-screen w-screen overflow-hidden bg-background hover-glow py-16 md:py-20"
       style={{ touchAction: 'pan-y' }}
       onMouseDown={() => setIsDragging(true)}
       onMouseUp={() => setIsDragging(false)}
@@ -358,10 +274,16 @@ const InfiniteHorizontalScroll = ({ projects }) => {
       </div>
       
       {/* Indicateur de swipe pour mobile */}
-      <div className="swipe-hint hidden md:hidden">
-        <svg width="80" height="20" viewBox="0 0 80 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 10H75M75 10L65 2M75 10L65 18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
+      <div className="swipe-hint md:hidden mt-4 flex justify-center">
+        <div className="flex items-center gap-2 text-white/60 text-sm">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 16L3 12M3 12L7 8M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span>Glisser</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 8L21 12M21 12L17 16M21 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
       </div>
       
       {/* Titre de la section */}
@@ -370,43 +292,26 @@ const InfiniteHorizontalScroll = ({ projects }) => {
         <p className="text-sm md:text-lg max-w-2xl float">Découvrez mes projets récents, réalisés avec passion et expertise technique.</p>
       </div>
       
-      {/* Grille de projets */}
+      {/* Conteneur des projets */}
       <div 
         ref={trackRef}
-        className="container-wide relative mb-10"
+        className="container-wide relative mb-10 mx-auto max-w-[1200px]"
       >
-        <motion.div 
-          className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-8 w-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {visibleProjects.map((index, i) => (
-            <ProjectCard key={`card-${index}`} project={projects[index]} delay={i} />
-          ))}
-          
-          {/* Afficher plus de projets - Uniquement visible s'il y a plus de 2 projets au total */}
-          {projects.length > 2 && (
-            <motion.div
-              className="flex items-center justify-center min-h-[300px] sm:min-h-[350px] md:min-h-[400px] rounded-xl md:rounded-2xl border border-dashed border-white/20 bg-transparent"
-              whileHover={{ scale: 1.02 }}
+        <AnimatePresence mode="wait" custom={direction}>
+          {visibleProjects.map((index) => (
+            <motion.div 
+              key={projects[index].title}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="w-full"
             >
-              <div className="text-center p-3 sm:p-4 md:p-6">
-                <motion.button
-                  onClick={handleNext}
-                  className="flex flex-col items-center justify-center text-accent"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 mb-1 sm:mb-2 md:mb-4 opacity-70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5V19M12 5L5 12M12 5L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span className="text-xs sm:text-sm md:text-lg font-medium">Voir plus</span>
-                </motion.button>
-              </div>
+              <ProjectCard project={projects[index]} delay={0} />
             </motion.div>
-          )}
-        </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
       
       {/* Boutons de navigation */}
@@ -418,7 +323,7 @@ const InfiniteHorizontalScroll = ({ projects }) => {
           whileTap="tap"
           onClick={handlePrevious}
           className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white border border-white/20 shadow-lg cursor-grab float-small float-delay-1"
-          aria-label="Projets précédents"
+          aria-label="Projet précédent"
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -442,7 +347,7 @@ const InfiniteHorizontalScroll = ({ projects }) => {
           whileTap="tap"
           onClick={handleNext}
           className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white border border-white/20 shadow-lg cursor-grab float-small float-delay-3"
-          aria-label="Projets suivants"
+          aria-label="Projet suivant"
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -460,11 +365,11 @@ const InfiniteHorizontalScroll = ({ projects }) => {
         </motion.button>
       </div>
       
-      {/* Numéro du groupe actuel et nombre total */}
+      {/* Numéro du projet actuel et nombre total */}
       <div className="absolute top-10 right-8 text-lg font-mono opacity-70">
-        <span className="text-accent text-2xl">{String(Math.floor(currentIndex / 2) + 1).padStart(2, '0')}</span>
+        <span className="text-accent text-2xl">{String(currentIndex + 1).padStart(2, '0')}</span>
         <span className="mx-2 text-white/50">/</span>
-        <span className="text-white/50">{String(Math.ceil(projects.length / 2)).padStart(2, '0')}</span>
+        <span className="text-white/50">{String(projects.length).padStart(2, '0')}</span>
       </div>
     </div>
   );

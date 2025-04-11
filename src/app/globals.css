@@ -570,7 +570,7 @@ section {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   pointer-events: none; /* Ne pas interférer avec les clics */
-  z-index: 0; /* Derrière le contenu de la carte */
+  z-index: 1; /* Augmenté de 0 à 1 */
 }
 
 .hover-spotlight-card.is-hovering::before {
@@ -580,5 +580,5 @@ section {
 /* Optionnel: Assurer que le contenu de la carte est au-dessus du spotlight */
 .hover-spotlight-card > * {
   position: relative;
-  z-index: 1;
+  z-index: 2; /* Augmenté de 1 à 2 */
 }

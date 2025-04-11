@@ -290,55 +290,38 @@ export default function Parcours() {
       </div>
       
       {/* Indicateur de section actuelle et bouton retour */}
-      <div className="py-3 flex items-center justify-center mb-2">
-        <div className="flex items-center mr-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSection}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ 
-                opacity: 1,
-                y: ["0px", "-3px", "0px"],
-                transition: {
-                  opacity: { duration: 0.3 },
-                  y: {
-                    repeat: Infinity,
-                    repeatType: "loop" as const,
-                    duration: 3,
-                    ease: "easeInOut",
-                    times: [0, 0.5, 1]
-                  }
-                }
-              }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-accent/80 px-3 py-1 rounded-full text-white text-sm font-medium flex items-center"
-              whileHover={{ scale: 1.05, backgroundColor: "rgba(var(--color-accent-rgb), 0.9)" }}
-            >
-              <span className="mr-1">{parcoursData[currentSection].icon}</span>
-              {parcoursData[currentSection].section}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-        
-        <motion.div
+      <div className="py-2 flex items-center justify-center mb-3">
+        <motion.div 
+          className="glass shadow-soft rounded-full px-8 flex items-center justify-center gap-8 backdrop-blur-md bg-white/10 border border-white/20 h-16 w-auto max-w-[95%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%]"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          animate={{
-            y: ["0px", "-2px", "0px"],
-            transition: {
-              repeat: Infinity,
-              repeatType: "loop" as const,
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.5, 1]
-            }
-          }}
         >
+          <AnimatePresence mode="wait">
+            <motion.button
+              key={currentSection}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-white text-base md:text-lg font-medium flex items-center justify-center hover:text-accent transition-colors"
+              onClick={() => {
+                const item = parcoursData[currentSection].items[0];
+                openModal(item, parcoursData[currentSection].section, 0);
+              }}
+            >
+              <span className="mr-2 flex items-center justify-center">{parcoursData[currentSection].icon}</span>
+              <span>{parcoursData[currentSection].section}</span>
+            </motion.button>
+          </AnimatePresence>
+          
+          <div className="h-8 w-px bg-white/30" />
+        
           <Link 
             href="/"
-            className="inline-block px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-all duration-300"
+            className="text-white text-base md:text-lg hover:text-accent transition-colors flex items-center justify-center"
           >
-            Retour à l'accueil
+            Accueil
           </Link>
         </motion.div>
       </div>

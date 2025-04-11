@@ -138,11 +138,6 @@ export default function Hero() {
                 je cherche à rejoindre une équipe tech ambitieuse où 
                 je peux apporter de la valeur tout en continuant à monter en compétences.
               </motion.p>
-              
-              <div className="flex space-x-4">
-                <NavigationButton id="#projects">Voir mes projets</NavigationButton>
-                <NavigationButton id="#contact" variant="outline">Me contacter</NavigationButton>
-              </div>
             </div>
           </div>
           

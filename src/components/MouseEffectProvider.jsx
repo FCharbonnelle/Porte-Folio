@@ -128,10 +128,10 @@ export default function MouseEffectProvider({ children }) {
           top: mousePosition.y - 12,
           backgroundColor: cursorColor,
           opacity: cursorVisible ? 1 : 0,
-          transform: cursorEnlarged ? 'scale(2.5)' : 'scale(1)',
+          transform: 'scale(2.5)',
         }}
         animate={{
-          scale: cursorEnlarged ? 2.5 : 1,
+          scale: 2.5,
           opacity: cursorVisible ? 1 : 0
         }}
         transition={{

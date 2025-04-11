@@ -75,11 +75,15 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isSticky ? 'glass shadow-soft h-20' : 'bg-transparent h-24'
+      className={`fixed top-0 z-50 transition-all duration-300 ${
+        isSticky 
+          ? 'glass shadow-soft h-16 rounded-full left-1/2 transform -translate-x-1/2 w-auto max-w-[95%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] mt-2' 
+          : 'bg-transparent h-24 w-full left-0'
       }`}
     >
-      <div className="container-wide flex items-center justify-between h-full px-6">
+      <div className={`h-full px-6 flex items-center justify-between ${
+        isSticky ? 'container mx-auto' : 'container-wide'
+      }`}>
         {/* Logo */}
         <Link href="/" className="relative z-10 group">
           <motion.div 

@@ -545,3 +545,40 @@ section {
 .hover-glow:hover::before {
   opacity: 1;
 }
+
+/* Effet Spotlight pour les cartes */
+.hover-spotlight-card {
+  position: relative; /* Nécessaire pour le pseudo-élément */
+  overflow: hidden; /* Pour contenir le pseudo-élément */
+}
+
+.hover-spotlight-card::before {
+  content: '';
+  position: absolute;
+  left: var(--card-mouse-x, -1000px); /* Position X, hors écran par défaut */
+  top: var(--card-mouse-y, -1000px); /* Position Y, hors écran par défaut */
+  width: 400px; /* Taille du cercle lumineux */
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(126, 58, 253, 0.15) 0%, /* Couleur de l'accent avec transparence */
+    rgba(126, 58, 253, 0.05) 40%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: translate(-50%, -50%); /* Centrer le cercle sur la souris */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none; /* Ne pas interférer avec les clics */
+  z-index: 0; /* Derrière le contenu de la carte */
+}
+
+.hover-spotlight-card.is-hovering::before {
+  opacity: 1; /* Afficher l'effet au survol */
+}
+
+/* Optionnel: Assurer que le contenu de la carte est au-dessus du spotlight */
+.hover-spotlight-card > * {
+  position: relative;
+  z-index: 1;
+}

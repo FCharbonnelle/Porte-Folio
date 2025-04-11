@@ -8,11 +8,12 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
+  summary?: string;
   children?: React.ReactNode;
   imageSrc?: string;
 }
 
-export default function Modal({ open, onClose, title, children, imageSrc }: ModalProps) {
+export default function Modal({ open, onClose, title, summary, children, imageSrc }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -117,13 +118,13 @@ export default function Modal({ open, onClose, title, children, imageSrc }: Moda
               
               {/* Partie contenu */}
               <motion.div 
-                className="w-full md:w-[40%] overflow-auto p-5 md:p-8 bg-background/90 h-[50%] md:h-full"
+                className="w-full md:w-[40%] overflow-auto p-5 md:p-8 bg-background/90 h-[50%] md:h-full flex flex-col items-center justify-center text-center"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
                 <motion.h3 
-                  className="text-2xl md:text-3xl font-bold text-accent mb-6"
+                  className="text-2xl md:text-3xl font-bold text-accent mb-2 text-center w-full"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.5 }}
@@ -131,8 +132,19 @@ export default function Modal({ open, onClose, title, children, imageSrc }: Moda
                   {title}
                 </motion.h3>
                 
+                {summary && (
+                  <motion.p
+                    className="text-sm md:text-base text-gray-300 mb-6 italic text-center w-full"
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35, duration: 0.5 }}
+                  >
+                    {summary}
+                  </motion.p>
+                )}
+                
                 <motion.div 
-                  className="space-y-6"
+                  className="space-y-6 w-full"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.5 }}

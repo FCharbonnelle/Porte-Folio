@@ -144,25 +144,93 @@ export default function Parcours() {
     }
   };
 
+  const getSummaryForItem = (item: ParcoursItem & { section?: string }): string => {
+    // Créer un résumé adapté à chaque élément avec un contenu plus étoffé
+    if (!item.section) return "";
+    
+    // Descriptions spécifiques pour chaque élément basées sur le titre
+    const specificDescriptions: Record<string, string> = {
+      // Diplômes et Formations
+      "Développeur Web/Web mobile": "Formation intensive certifiante de développeur web et mobile incluant front-end (HTML, CSS, JavaScript, React), back-end (Node.js, API REST), et méthodologies agiles. Des projets concrets sont réalisés tout au long du parcours.",
+      "BTS Technico-Commercial": "Formation commerciale et technique de niveau bac+2 offrant des compétences en négociation, marketing, gestion et une forte dimension technique spécialisée.",
+      "Baccalauréat STI génie productique mécanique": "Formation de niveau bac orientée vers les sciences et technologies industrielles avec spécialisation en productique mécanique, alliant théorie et pratique en atelier.",
+      "BEP Electronique": "Formation aux fondamentaux de l'électronique incluant la lecture de schémas, le montage et dépannage de circuits électroniques, et l'utilisation d'appareils de mesure.",
+      
+      // Expériences professionnelles
+      "Conseiller de vente Equipements de la Maison": "Responsable du conseil, de la vente et du service après-vente pour le rayon équipement de la maison. Gestion des stocks, animations commerciales et fidélisation de la clientèle.",
+      "Conseiller de vente en téléphonie": "Expert en solutions de téléphonie mobile, conseils personnalisés sur les forfaits et appareils, configuration des terminaux et service après-vente.",
+      "Vendeur logithèque": "Conseil client sur les logiciels, jeux vidéo et produits high-tech. Animation des rayons et veille concurrentielle pour adapter l'offre aux tendances.",
+      "Vendeur matériel Informatique et Musique": "Spécialiste de la vente de matériel informatique d'occasion et d'instruments de musique. Diagnostic, réparation et remise en état des équipements.",
+      
+      // Compétences
+      "Créer, élaborer et identifier des concepts innovants": "Capacité à générer des idées originales et à les transformer en solutions concrètes, avec une approche méthodique de l'innovation.",
+      "Actualiser régulièrement ses connaissances": "Veille technologique et formation continue pour maintenir un niveau d'expertise élevé dans un environnement en constante évolution.",
+      "Recueillir et analyser les besoins client": "Écoute active et analyse fine des attentes exprimées ou implicites pour proposer des solutions adaptées et pertinentes.",
+      "Présenter et valoriser un produit ou un service": "Communication persuasive et techniques de présentation efficaces pour mettre en avant les bénéfices d'une offre.",
+      "Accompagner l'appropriation d'un outil par ses utilisateurs": "Pédagogie et patience pour former les utilisateurs et assurer une adoption réussie des nouveaux outils.",
+      
+      // Langues
+      "Français": "Langue maternelle maîtrisée à l'écrit comme à l'oral, avec des compétences rédactionnelles et une bonne élocution.",
+      "Anglais": "Niveau B1/B2 permettant une communication professionnelle efficace, une compréhension des documents techniques et la participation à des réunions internationales.",
+      
+      // Atouts
+      "Travailler en équipe": "Collaboration efficace dans des environnements variés, avec une capacité à partager des connaissances et à contribuer positivement à la dynamique collective.",
+      "S'adapter aux changements": "Flexibilité et résilience face aux évolutions, avec une capacité à rester performant dans des contextes mouvants.",
+      "Faire preuve de curiosité": "Intérêt constant pour l'apprentissage et la découverte, recherche proactive de nouvelles connaissances et méthodes.",
+      "Faire preuve de créativité, d'inventivité": "Approche novatrice des problèmes, génération d'idées originales et capacité à penser 'hors des sentiers battus'.",
+      "Faire preuve de persévérance": "Détermination face aux obstacles, capacité à maintenir l'effort dans la durée pour atteindre les objectifs fixés.",
+      "Faire preuve de rigueur et de précision": "Méthodologie et attention aux détails, garantissant fiabilité et qualité dans la réalisation des tâches.",
+      "Gérer son stress": "Maîtrise des émotions et capacité à rester efficace sous pression, avec des techniques personnelles de gestion du stress.",
+      
+      // Centres d'intérêt
+      "Sorties entre amis": "Moments de convivialité et d'échange qui nourrissent ma créativité et maintiennent un équilibre entre vie professionnelle et personnelle.",
+      "Bowling, Billard, Basketball": "Pratique régulière de ces activités développant coordination, précision et esprit d'équipe, compétences transférables au contexte professionnel.",
+      "Jeux vidéos multi-joueurs en ligne": "Participation à des communautés de joueurs permettant de développer stratégie, réactivité et collaboration à distance."
+    };
+    
+    // Retourner la description spécifique si elle existe, sinon générer une description générique
+    if (specificDescriptions[item.title]) {
+      return specificDescriptions[item.title];
+    }
+    
+    // Descriptions génériques par section si aucune description spécifique n'est disponible
+    switch (item.section) {
+      case "Diplômes et Formations":
+        return `Formation suivie ${item.date || ""} ${item.lieu ? `au ${item.lieu}` : ""}, offrant des compétences théoriques et pratiques dans le domaine concerné.`;
+      
+      case "Expériences professionnelles":
+        return `Poste occupé ${item.date || ""} ${item.lieu ? `chez ${item.lieu}` : ""}, développant expertise technique et compétences relationnelles.`;
+      
+      case "Compétences":
+        return "Compétence acquise au fil de mes expériences professionnelles et perfectionnée par une pratique régulière.";
+      
+      case "Langues":
+        return "Compétence linguistique permettant d'échanger et de communiquer dans des contextes variés.";
+      
+      case "Atouts":
+        return "Qualité personnelle cultivée au fil du temps et mise en pratique quotidiennement dans mes activités professionnelles.";
+      
+      case "Centres d'intérêt":
+        return "Activité pratiquée régulièrement pendant mon temps libre, source d'équilibre et de développement personnel.";
+      
+      default:
+        return "";
+    }
+  };
+
   return (
-    <div className="relative h-screen overflow-hidden bg-gradient-to-b from-background to-background-secondary text-white flex flex-col">
+    <div className="relative min-h-screen bg-gradient-to-b from-background to-background-secondary text-white flex flex-col">
       
       {/* Titre principal */}
-      <div className="pt-8 pb-1 text-center">
+      <div className="pt-12 pb-6 text-center">
         <motion.h1 
-          className="text-xl md:text-3xl font-bold mb-1"
+          className="text-3xl md:text-5xl lg:text-6xl font-bold"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           Mon Parcours
         </motion.h1>
-        <motion.div 
-          className="w-16 h-1 bg-accent mx-auto"
-          initial={{ width: 0 }}
-          animate={{ width: "4rem" }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        />
       </div>
       
       {/* Carrousel principal */}
@@ -243,7 +311,7 @@ export default function Parcours() {
         
         {/* Boutons navigation */}
         <motion.button
-          className="absolute left-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-1 pr-3 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white z-10 border border-white/30"
+          className="absolute left-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-1 pr-3 h-16 rounded-full glass shadow-soft backdrop-blur-md text-white z-10 border border-white/20"
           onClick={handlePrevious}
           whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
           whileTap={{ scale: 0.95 }}
@@ -260,13 +328,13 @@ export default function Parcours() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 19L8 12L15 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <span className="hidden sm:inline text-sm font-medium">
+          <span className="hidden sm:inline text-base md:text-lg font-medium">
             {parcoursData[(currentSection > 0 ? currentSection - 1 : parcoursData.length - 1)].section}
           </span>
         </motion.button>
         
         <motion.button
-          className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-3 pr-1 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white z-10 border border-white/30"
+          className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center gap-1 pl-3 pr-1 h-16 rounded-full glass shadow-soft backdrop-blur-md text-white z-10 border border-white/20"
           onClick={handleNext}
           whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
           whileTap={{ scale: 0.95 }}
@@ -280,7 +348,7 @@ export default function Parcours() {
             }
           }}
         >
-          <span className="hidden sm:inline text-sm font-medium">
+          <span className="hidden sm:inline text-base md:text-lg font-medium">
             {parcoursData[(currentSection < parcoursData.length - 1 ? currentSection + 1 : 0)].section}
           </span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -332,6 +400,7 @@ export default function Parcours() {
           open={modalOpen} 
           onClose={() => setModalOpen(false)} 
           title={selectedItem.title}
+          summary={getSummaryForItem(selectedItem)}
           imageSrc={getImageSrc(selectedItem.title)}
         >
           <div className="space-y-4 flex flex-col items-center text-center">

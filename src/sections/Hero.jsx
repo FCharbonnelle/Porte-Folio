@@ -122,6 +122,7 @@ export default function Hero() {
               
               <motion.p
                 animate={generateFloatingAnimation(2, { intensity: 0.15, enableRotate: false, enableX: false })}
+                className="text-2xl text-white font-medium mb-3"
               >
                 Toujours en quête de nouvelles opportunités,
                 je souhaite mettre mon énergie et ma créativité au service de projets concrets,
